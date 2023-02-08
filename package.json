@@ -1,16 +1,24 @@
 {
   "name": "@amirmarmul/waba-common",
   "version": "1.0.2",
-  "description": "waba-common",
+  "license": "MIT",
+  "description": "",
+  "keywords": [
+    "waba"
+  ],
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amirmarmul/waba-common.git"
+  },
   "scripts": {
     "build": "tsc"
   },
   "files": [
     "dist"
   ],
-  "license": "ISC",
   "devDependencies": {
     "typescript": "^4.9.5"
-  }
+  },
+  "private": false
 }
