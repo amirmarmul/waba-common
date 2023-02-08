@@ -19,6 +19,5 @@
   ],
   "devDependencies": {
     "typescript": "^4.9.5"
-  },
-  "private": false
+  }
 }
