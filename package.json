@@ -1,5 +1,5 @@
 {
-  "name": "kacestudio/waba-common",
+  "name": "@amirmarmul/waba-common",
   "version": "1.0.1",
   "description": "waba-common",
   "main": "dist/index.js",
