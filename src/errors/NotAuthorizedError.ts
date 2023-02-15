@@ -1,6 +1,6 @@
 import HttpError from './HttpError';
 
-class NotAuthorizedError extends HttpError {
+export class NotAuthorizedError extends HttpError {
     constructor() {
         super('You\'re not authorized', 403);
     }

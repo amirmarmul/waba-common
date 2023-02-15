@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from 'winston';
 
-const logger = createLogger({
+export const logger = createLogger({
     level: process.env.LOG_LEVEL,
     format: format.combine(format.timestamp(), format.json()),
     transports: [

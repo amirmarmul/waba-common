@@ -3,7 +3,7 @@ import HttpError from '../errors/HttpError';
 import logger from '../utils/logger';
 import { sendErrorResponse } from '../utils/response';
 
-function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
     logger.error(err.stack);
 
     if (err instanceof HttpError) {

@@ -1,7 +1,7 @@
 import HttpError, { ErrorMessage } from './HttpError';
 import { ValidationError } from 'express-validator';
 
-class RequestValidationError extends HttpError {
+export class RequestValidationError extends HttpError {
     protected errors: ValidationError[];
 
     constructor(errors: ValidationError[]) {

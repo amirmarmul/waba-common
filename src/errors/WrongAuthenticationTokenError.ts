@@ -1,6 +1,6 @@
 import HttpError from './HttpError';
 
-class WrongAuthenticationTokenError extends HttpError {
+export class WrongAuthenticationTokenError extends HttpError {
     constructor() {
         super('Authentication token missing', 401);
     }

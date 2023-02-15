@@ -3,7 +3,7 @@ export interface ErrorMessage {
     field?: string;
 }
 
-abstract class HttpError extends Error {
+export abstract class HttpError extends Error {
     public status: number;
     public message: string;
 
