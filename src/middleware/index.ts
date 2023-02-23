@@ -1,3 +1,3 @@
-export * from './errorHandler';
-export * from './validateRequest';
-export * from './httpLogger';
+export * from './errorMiddleware';
+export * from './loggerMiddleware';
+export * from './validationMiddleware';

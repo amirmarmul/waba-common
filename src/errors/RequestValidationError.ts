@@ -1,5 +1,5 @@
+import { ValidationError } from 'class-validator';
 import HttpError, { ErrorMessage } from './HttpError';
-import { ValidationError } from 'express-validator';
 
 export class RequestValidationError extends HttpError {
     protected errors: ValidationError[];
@@ -12,7 +12,7 @@ export class RequestValidationError extends HttpError {
 
     serializeErrors(): ErrorMessage[] {
         return this.errors.map((error: ValidationError) => {
-            return { message: error.msg, field: error.param };
+            return { message: Object.values(error.constraints!).join(', '), field: error.property };
         });
     }
 }
