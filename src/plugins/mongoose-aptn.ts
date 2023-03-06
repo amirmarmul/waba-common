@@ -157,4 +157,12 @@ export function mongoosePaginate<T>(schema: Schema<T>) {
       return undefined;
     }
   }
+
+  schema.set('toJSON', {
+    virtuals: true,
+    transform: function (doc, ret) {
+      ret.id = ret.__id;
+      delete ret. __v;
+    }
+  });
 }

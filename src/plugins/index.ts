@@ -1,1 +1,1 @@
-export * from './mongoose-paginate';
+export * from './mongoose-aptn';
