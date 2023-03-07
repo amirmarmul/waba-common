@@ -29,4 +29,5 @@ export function validateQueryMiddleware<T>(type: any, skipMissingProperties = fa
   }
 }
 
-export default validateBodyMiddleware;
+export const validationMiddleware = validateBodyMiddleware;
+export default validationMiddleware;
