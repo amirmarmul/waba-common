@@ -161,7 +161,8 @@ export function mongoosePaginate<T>(schema: Schema<T>) {
   schema.set('toJSON', {
     virtuals: true,
     transform: function (doc, ret) {
-      ret.id = ret.__id;
+      ret.id = ret._id;
+      delete ret._id;
       delete ret. __v;
     }
   });
