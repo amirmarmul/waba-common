@@ -6,11 +6,11 @@ abstract class Publisher<T> implements PublisherContract {
   private connection: AmqpConnectionManager;
   private channel: ChannelWrapper;
   private payload: T;
-  private name: string = 'waba-conv-inner';
+  abstract name: string;
   abstract topic: string;
 
   constructor(payload: T) {
-    this.connection = amqp.connect(['amqp://root:root@rabbitmq']);
+    this.connection = amqp.connect([process.env.APP_MQ!]);
     this.channel = this.connection.createChannel({
       json: true,
       setup: (channel: Channel) => this.setup(channel),

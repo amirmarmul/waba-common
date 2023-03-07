@@ -12,7 +12,7 @@
     "url": "https://github.com/amirmarmul/waba-common.git"
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc",
     "prebuild": "rimraf dist",
     "postbuild": "cp package.json readme.md dist"
   },
