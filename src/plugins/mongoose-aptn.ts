@@ -26,8 +26,10 @@ export interface PaginationOptions {
   };
   sort?: any | undefined;
   projection?: any | undefined;
-  limit?: any | undefined;
-  offset?: any | undefined;
+  page?: {
+    limit?: any | undefined,
+    offset?: any | undefined,
+  }
 }
 
 export interface Pagination<T> extends Model<T> {
@@ -52,8 +54,8 @@ export function mongoosePaginate<T>(schema: Schema<T>) {
     let projection = options?.projection ?? {}
 
     // PAGING
-    const limit = parseInt(options?.limit) > 0 ? parseInt(options?.limit): 0;
-    const skip = parseInt(options?.offset) > 0 ? parseInt(options?.offset): 0;
+    const limit = parseInt(options?.page?.limit) > 0 ? parseInt(options?.page?.limit): 0;
+    const skip = parseInt(options?.page?.offset) > 0 ? parseInt(options?.page?.offset): 0;
 
     // SEARCHING
     if (
