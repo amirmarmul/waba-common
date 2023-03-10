@@ -49,9 +49,9 @@ export function mongoosePaginate<T>(schema: Schema<T>) {
     let aggregate = options?.aggregate ?? undefined;
     let populate = options?.populate ?? undefined;
     let select = options?.select ?? undefined;
-    let sort = options?.sort ?? undefined;
     let search = options?.search ?? undefined;
-    let projection = options?.projection ?? {}
+    let sort = options?.sort ?? { '_id': -1 };
+    let projection = options?.projection ?? {};
 
     // PAGING
     const limit = parseInt(options?.page?.limit) > 0 ? parseInt(options?.page?.limit): 0;
