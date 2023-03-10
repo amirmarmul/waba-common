@@ -50,7 +50,7 @@ export function mongoosePaginate<T>(schema: Schema<T>) {
     let populate = options?.populate ?? undefined;
     let select = options?.select ?? undefined;
     let search = options?.search ?? undefined;
-    let sort = options?.sort ?? { '_id': -1 };
+    let sort = options?.sort ?? '-_id';
     let projection = options?.projection ?? {};
 
     // PAGING
