@@ -6,7 +6,7 @@ export enum TransactionMessagingStatus {
   Failed = 'failed',
 }
 
-interface TransactionMessaging {
+export interface TransactionMessaging {
   _id?: string,
   account: any;
   campaign: any;
