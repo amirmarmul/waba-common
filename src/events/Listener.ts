@@ -16,8 +16,8 @@ abstract class Listener<T> implements ListenerContract {
     });
   }
 
-  abstract onMessage(data: T, ack: Function): void;
   abstract setup(channel: Channel): any;
+  abstract onMessage(data: T, ack: Function): void;
 
   public listen(): void {
     this.channel.consume(this.queue, (msg) => {
