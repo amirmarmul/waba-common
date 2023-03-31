@@ -1,2 +1,4 @@
 export * from './TransactionMessaging';
-export * from './WabaMessageStatusUpdate';
+export * from './TransactionMessagingStatusUpdate';
+export * from './MessageTemplate';
+export * from './MessageTemplateStatusUpdate';
