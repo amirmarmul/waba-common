@@ -22,6 +22,9 @@ export interface TransactionMessaging {
   content?: any;
   payment?: any;
   sender?: any;
+  sourceId?: string;
+  sourceStatus?: string;
+  sourceReason?: string;
 }
 
 export default TransactionMessaging;
