@@ -20,6 +20,7 @@ export interface MessageTemplate {
   sourceReason?: string;
   account: any;
   notes?: any;
+  sentAt?: Date,
 }
 
 export default MessageTemplate;
