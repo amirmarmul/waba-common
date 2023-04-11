@@ -1,8 +1,10 @@
 export enum MessageTemplateStatus {
   Draft = 'draft',
+  Scheduled = 'scheduled',
   Published = 'published',
   Approved = 'approved',
   Declined = 'declined',
+  Failed = 'failed',
 }
 
 export interface MessageTemplate {
