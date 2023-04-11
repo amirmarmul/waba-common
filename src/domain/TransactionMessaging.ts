@@ -25,6 +25,7 @@ export interface TransactionMessaging {
   sourceId?: string;
   sourceStatus?: string;
   sourceReason?: string;
+  sentAt?: Date,
 }
 
 export default TransactionMessaging;
