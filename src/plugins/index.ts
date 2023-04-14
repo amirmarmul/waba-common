@@ -1,2 +1,2 @@
-export * from './mongoose-aptn';
+export * from './mongoose';
 export * from './axios';
