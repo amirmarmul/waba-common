@@ -1,6 +1,10 @@
-import axios from 'axios';
+import base from 'axios';
 import curlirize from 'axios-curlirize';
+export const axios = base.create({
+  headers: {
+    'Content-Type': 'application/vnd.api+json',
+    'Accept': 'application/vnd.api+json',
+  }
+});
 curlirize(axios);
-axios.defaults.headers.common['Content-Type'] = 'application/vnd.api+json';
-axios.defaults.headers.common['Accept'] = 'application/vnd.api+json';
 export default axios;
