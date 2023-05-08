@@ -1,5 +1,5 @@
 import { Publisher } from '../contracts';
 
-export function dispatcher(publisher: Publisher) {
-  publisher.publish();
+export async function dispatcher(publisher: Publisher) {
+  await publisher.publish();
 }
