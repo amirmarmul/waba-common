@@ -1,6 +1,5 @@
 import base from 'axios';
 import curlirize from 'axios-curlirize';
-curlirize(base);
 export const axios = base.create({
   headers: {
     'Content-Type': 'application/json',
@@ -23,4 +22,5 @@ axios.interceptors.response.use(function (response) {
   // Do something with response error
   return Promise.reject(error);
 });
+curlirize(axios);
 export default axios;
