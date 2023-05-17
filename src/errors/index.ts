@@ -4,5 +4,6 @@ export * from './HttpError';
 export * from './NotAuthorizedError';
 export * from './NotFoundError';
 export * from './RequestValidationError';
+export * from './ValidationError';
 export * from './WrongAuthenticationTokenError';
 export * from './WrongCredentialsError';
