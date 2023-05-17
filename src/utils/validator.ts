@@ -1,15 +1,10 @@
-import { plainToClass, ClassTransformOptions } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { validateSync, ValidatorOptions } from 'class-validator';
 import { RequestValidationError } from '../errors';
 
-interface TransformValidationOptions {
-  validator?: ValidatorOptions,
-  transformer?: ClassTransformOptions,
-}
-
-export function transformAndValidate(klass: any, object: object, options?: TransformValidationOptions) {
-  const classObject: object = plainToClass(klass, object, options ? options.transformer : void 0);
-  const errors = validateSync(classObject, options ? options.validator : void 0);
+export function transformAndValidate(klass: any, object: object, options?: ValidatorOptions) {
+  const classObject: object = plainToClass(klass, object, { enableImplicitConversion: false });
+  const errors = validateSync(classObject, options ? options : void 0);
   if (errors.length) {
     throw new RequestValidationError(errors);
   }
