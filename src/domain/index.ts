@@ -4,3 +4,4 @@ export * from './MessageTemplate';
 export * from './MessageTemplateStatusUpdate';
 export * from './ChannelWhatsapp';
 export * from './Payment';
+export * from './BalanceMutation';
