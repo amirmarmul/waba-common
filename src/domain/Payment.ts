@@ -4,11 +4,12 @@ export enum PaymentType {
 }
 
 export interface Payment {
-  account: string;
+  accountId: string;
   amount: number;
-  resource: string;
-  resourceName: string;
+  resource?: string;
+  resourceName?: string;
   type: PaymentType;
+  notes: string;
 }
 
 export default Payment;
