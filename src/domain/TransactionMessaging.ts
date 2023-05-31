@@ -9,7 +9,9 @@ export enum TransactionMessagingStatus {
 export interface TransactionMessaging {
   _id?: string,
   accountId: any;
+  account?: any;
   campaignId: any;
+  campaign?: any;
   sku: string;
   amount: number;
   msisdn: any;

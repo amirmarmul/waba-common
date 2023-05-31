@@ -11,6 +11,7 @@ export interface ProviderConfig {
 export interface ChannelWhatsapp {
   _id?: string;
   accountId: string;
+  account?: any;
   phone: string;
   provider?: string;
   providerConfig?: ProviderConfig;

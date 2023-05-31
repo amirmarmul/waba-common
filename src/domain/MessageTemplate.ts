@@ -15,10 +15,12 @@ export interface MessageTemplate {
   createdAt: any;
   updatedAt: any;
   senderId?: any;
+  sender?: any;
   sourceId?: string;
   sourceStatus?: string;
   sourceReason?: string;
   accountId: any;
+  account?: any;
   notes?: any;
   sentAt?: Date,
 }
