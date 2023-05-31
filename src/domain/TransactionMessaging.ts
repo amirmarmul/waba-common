@@ -8,8 +8,8 @@ export enum TransactionMessagingStatus {
 
 export interface TransactionMessaging {
   _id?: string,
-  account: any;
-  campaign: any;
+  accountId: any;
+  campaignId: any;
   sku: string;
   amount: number;
   msisdn: any;
@@ -18,9 +18,11 @@ export interface TransactionMessaging {
   scheduleAt?: Date,
   scheduleZone?: string;
   notes?: any;
+  productId?: string;
   product?: any;
   content?: any;
   payment?: any;
+  senderId?: string;
   sender?: any;
   sourceId?: string;
   sourceStatus?: string;

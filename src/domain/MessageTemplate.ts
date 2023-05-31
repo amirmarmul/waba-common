@@ -14,11 +14,11 @@ export interface MessageTemplate {
   status: MessageTemplateStatus;
   createdAt: any;
   updatedAt: any;
-  sender?: any;
+  senderId?: any;
   sourceId?: string;
   sourceStatus?: string;
   sourceReason?: string;
-  account: any;
+  accountId: any;
   notes?: any;
   sentAt?: Date,
 }
