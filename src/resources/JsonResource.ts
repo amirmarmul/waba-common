@@ -2,7 +2,7 @@ interface LooseObject {
   [key: string]: any;
 }
 
-export default class JsonResource {
+export class JsonResource {
   static hidden: string[] = [];
   static fillable: string[] = [];
   protected attributes: LooseObject = {};
@@ -37,3 +37,5 @@ export default class JsonResource {
       }, {});
   }
 }
+
+export default JsonResource;
