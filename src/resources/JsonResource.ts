@@ -2,7 +2,7 @@ interface LooseObject {
   [key: string]: any;
 }
 
-export default class JsonResponse {
+export default class JsonResource {
   static hidden: string[] = [];
   static fillable: string[] = [];
   protected attributes: LooseObject = {};
@@ -12,19 +12,19 @@ export default class JsonResponse {
   }
 
   protected getHidden(): string[] {
-    return JsonResponse.hidden;
+    return JsonResource.hidden;
   }
 
   protected setHidden(keys: string[]): void {
-    JsonResponse.hidden = keys;
+    JsonResource.hidden = keys;
   }
 
   protected getFillable(): string[] {
-    return JsonResponse.fillable;
+    return JsonResource.fillable;
   }
 
   protected setFillable(keys: string[]): void {
-    JsonResponse.fillable = keys;
+    JsonResource.fillable = keys;
   }
 
   public toJSON() {
