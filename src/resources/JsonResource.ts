@@ -1,13 +1,9 @@
-interface LooseObject {
-  [key: string]: any;
-}
-
 export class JsonResource {
   [property: string]: any;
 
-  static hidden: string[] = [];
-  static fillable: string[] = [];
-  protected attributes: LooseObject = {};
+  protected hidden: string[] = [];
+  protected fillable: string[] = [];
+  protected attributes: any = {};
 
   constructor(attributes: object) {
     this.fill(attributes);
@@ -26,7 +22,7 @@ export class JsonResource {
     });
   }
 
-  protected fill(attributes: LooseObject) {
+  protected fill(attributes: any) {
     for (const key in attributes) {
       this.setAttribute(key, attributes[key]);
     }
@@ -45,26 +41,26 @@ export class JsonResource {
   }
 
   protected getHidden(): string[] {
-    return JsonResource.hidden;
+    return this.hidden;
   }
 
   protected setHidden(keys: string[]): void {
-    JsonResource.hidden = keys;
+    this.hidden = keys;
   }
 
   protected getFillable(): string[] {
-    return JsonResource.fillable;
+    return this.fillable;
   }
 
   protected setFillable(keys: string[]): void {
-    JsonResource.fillable = keys;
+    this.fillable = keys;
   }
 
   public toJSON() {
     return Object.keys(this.attributes)
       .filter(key => this.getFillable().includes(key))
       .filter(key => !this.getHidden().includes(key))
-      .reduce((target: LooseObject, key) => {
+      .reduce((target: any, key) => {
         target[key] = this.attributes[key];
         return target;
       }, {});
