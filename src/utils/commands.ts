@@ -1,5 +1,5 @@
 import { Command } from '../contracts';
 
-export async function executor(command: Command) {
-  await command.execute();
+export async function executor(command: Command): Promise<any> {
+  return await command.execute();
 }
