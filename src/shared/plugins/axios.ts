@@ -23,4 +23,3 @@ axios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 curlirize(axios);
-export default axios;

@@ -31,7 +31,7 @@ export class JsonResource {
   protected isAttribute(key: string): boolean {
     return this.attributes.hasOwnProperty(key);
   }
-  
+
   protected getAttribute(key: string) {
     return this.attributes[key];
   }
@@ -66,5 +66,3 @@ export class JsonResource {
       }, {});
   }
 }
-
-export default JsonResource;
