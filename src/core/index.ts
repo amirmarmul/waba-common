@@ -10,6 +10,9 @@ export * from '@/core/infrastructure/events/Event';
 export * from '@/core/infrastructure/events/Listener';
 export * from '@/core/infrastructure/events/Worker';
 
+export { Event as EventRpc } from '@/core/infrastructure/events/Event';
+export { Listener as ListenerRpc } from '@/core/infrastructure/events/rpc/Listener';
+
 export * from '@/core/infrastructure/Container';
 export * from '@/core/infrastructure/Controller';
 export * from '@/core/infrastructure/Mapper';
