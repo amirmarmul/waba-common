@@ -6,15 +6,12 @@ export * from '@/core/domain/ValueObject';
 
 export * from '@/core/infrastructure/http/App';
 
-export { Event as EventRPC } from '@/core/infrastructure/events/rpc/Event';
-export { Listener as ListenerRPC } from '@/core/infrastructure/events/rpc/Listener';
-
 export * from '@/core/infrastructure/events/Event';
 export * from '@/core/infrastructure/events/Listener';
 export * from '@/core/infrastructure/events/Worker';
 
 export * from '@/core/infrastructure/Container';
-export * from '@/core/infrastructure/Container';
+export * from '@/core/infrastructure/Controller';
 export * from '@/core/infrastructure/Mapper';
 export * from '@/core/infrastructure/Repo';
 
