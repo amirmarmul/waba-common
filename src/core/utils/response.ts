@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ErrorMessage } from '../errors/HttpError';
+import { ErrorMessage } from '@/core/errors/AppError';
 
 export function sendSuccessResponse(res: Response, data: any, status: number = 200) {
   return res.status(status).json({ status, data });

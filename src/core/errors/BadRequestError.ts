@@ -1,6 +1,6 @@
-import HttpError from './HttpError';
+import { AppError } from '@/core/errors/AppError';
 
-export class BadRequestError extends HttpError {
+export class BadRequestError extends AppError {
   constructor(message = 'Bad Request') {
     super(message, 400);
   }

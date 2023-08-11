@@ -5,6 +5,9 @@ import cors from 'cors';
 
 import { Container } from '@/core/infrastructure/Container';
 import { Controller } from '@/core/infrastructure/Controller';
+import { loggerMiddleware } from '@/core/infrastructure/http/middleware/loggerMiddleware';
+import { routeNotFoundMiddleware } from '@/core/infrastructure/http/middleware/routeNotFoundMiddleware';
+import { errorMiddleware } from '@/core/infrastructure/http/middleware/errorMiddleware';
 
 export class App {
   protected app: express.Application = express();
@@ -22,6 +25,8 @@ export class App {
   }
 
   private registerMiddleware() {
+    this.app.use(loggerMiddleware);
+
     this.app.use(cors({ origin: '*' }));
     this.app.use(compression());
     this.app.use(helmet());
@@ -43,5 +48,8 @@ export class App {
     return Container.get<Controller>(klass);
   }
 
-  private registerErrorHandlers() {}
+  private registerErrorHandlers() {
+    this.app.use(routeNotFoundMiddleware);
+    this.app.use(errorMiddleware);
+  }
 }

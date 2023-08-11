@@ -1,6 +1,6 @@
-import HttpError from './HttpError';
+import { AppError } from '@/core/errors/AppError';
 
-export class NotAuthorizedError extends HttpError {
+export class NotAuthorizedError extends AppError {
   constructor() {
     super('You\'re not authorized', 403);
   }

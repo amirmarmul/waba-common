@@ -1,6 +1,6 @@
-import HttpError, { ErrorMessage } from './HttpError';
+import { AppError, ErrorMessage } from '@/core/errors/AppError';
 
-export class ValidationError extends HttpError {
+export class ValidationError extends AppError {
   constructor(protected errors: ErrorMessage[]) {
     super('Unprocessable Content', 422);
   }

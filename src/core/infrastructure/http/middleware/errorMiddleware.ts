@@ -1,16 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import HttpError from '../errors/HttpError';
-import logger from '../utils/logger';
-import { sendErrorResponse } from '../utils/response';
+import logger from '@/core/utils/logger';
+import { AppError } from '@/core/errors/AppError';
+import { sendErrorResponse } from '@/core/utils/response';
 
 export function errorMiddleware(err: Error, req: Request, res: Response, next: NextFunction) {
   logger.error(err.stack);
 
-  if (err instanceof HttpError) {
+  if (err instanceof AppError) {
     return sendErrorResponse(res, err.serializeErrors(), err.status);
   }
 
   return sendErrorResponse(res, [{ message: err.message }]);
 }
-
-export default errorMiddleware;

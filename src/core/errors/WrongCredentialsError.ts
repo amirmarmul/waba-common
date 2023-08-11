@@ -1,6 +1,6 @@
-import HttpError from './HttpError';
+import { AppError } from '@/core/errors/AppError';
 
-export class WrongCredentialsError extends HttpError {
+export class WrongCredentialsError extends AppError {
   constructor() {
     super('Wrong credentials provided', 401);
   }

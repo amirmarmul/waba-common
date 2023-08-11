@@ -1,4 +1,4 @@
-import { RequestValidationError } from '../errors/RequestValidationError';
+import { RequestValidationError } from '@/core/errors/RequestValidationError';
 import { plainToClass } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
@@ -30,4 +30,3 @@ export function validateQueryMiddleware<T>(type: any, skipMissingProperties = fa
 }
 
 export const validationMiddleware = validateBodyMiddleware;
-export default validationMiddleware;

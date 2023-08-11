@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validateSync, ValidatorOptions } from 'class-validator';
-import { RequestValidationError } from '../errors';
+import { RequestValidationError } from '@/core/errors/RequestValidationError';
 
 export type Klass<T> = new (...args: any[]) => T;
 

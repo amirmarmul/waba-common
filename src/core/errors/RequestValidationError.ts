@@ -1,7 +1,7 @@
 import { ValidationError } from 'class-validator';
-import HttpError, { ErrorMessage } from './HttpError';
+import { AppError, ErrorMessage } from '@/core/errors/AppError';
 
-export class RequestValidationError extends HttpError {
+export class RequestValidationError extends AppError {
   protected errors: ValidationError[];
 
   constructor(errors: ValidationError[]) {

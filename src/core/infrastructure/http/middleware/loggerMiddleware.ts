@@ -1,5 +1,5 @@
 import morgan from 'morgan';
-import { logger } from '../utils';
+import { logger } from '@/core/utils/logger';
 
 export const loggerMiddleware = morgan('combined', {
   stream: new class {
@@ -8,5 +8,3 @@ export const loggerMiddleware = morgan('combined', {
     }
   }
 });
-
-export default loggerMiddleware;

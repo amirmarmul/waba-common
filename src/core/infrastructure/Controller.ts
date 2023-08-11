@@ -1,4 +1,6 @@
 import { Response, Router } from 'express';
+import { sendSuccessResponse } from '@/core/utils/response';
+import { AppError } from '@/core/errors/AppError';
 
 export abstract class Controller {
   router: Router = Router();
@@ -11,7 +13,7 @@ export abstract class Controller {
 
   public ok<T>(res: Response, dto?: T) {
     if (!!dto) {
-      return res.status(200).json(dto);
+      return sendSuccessResponse(res, dto, 200);
     } else {
       return res.sendStatus(200);
     }
@@ -22,8 +24,9 @@ export abstract class Controller {
   }
 
   public fail(res: Response, error: Error | string) {
-    return res.status(500).json({
-      message: error.toString()
-    });
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new AppError(error);
   }
 }
