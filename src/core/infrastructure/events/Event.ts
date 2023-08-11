@@ -20,7 +20,7 @@ export abstract class Event<T> implements EventContract {
   }
 
   public setup(channel: Channel): void {
-    channel.assertExchange(this.exchange, 'topic', { durable: false });
+    channel.assertExchange(this.exchange, 'topic', { durable: true });
   }
 
   public publish() {

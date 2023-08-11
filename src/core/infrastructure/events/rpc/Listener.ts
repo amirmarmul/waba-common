@@ -2,7 +2,7 @@ import { Listener as BaseListener, Channel } from '@/core/infrastructure/events/
 
 export abstract class Listener<T> extends BaseListener<T> {
   public setup(channel: Channel) {
-    channel.assertQueue(this.queue, { durable: false });
+    channel.assertQueue(this.queue, { durable: true });
   }
 
   public listen() {
