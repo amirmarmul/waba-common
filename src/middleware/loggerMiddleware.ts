@@ -3,8 +3,8 @@ import { logger } from '../utils';
 
 export const loggerMiddleware = morgan('combined', {
   stream: new class {
-    write(combined: string) {
-      logger.info('http-logger', { combined });
+    write(req: string) {
+      logger.info('http-logger', { req });
     }
   }
 });
