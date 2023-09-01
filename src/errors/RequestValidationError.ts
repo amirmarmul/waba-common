@@ -13,7 +13,7 @@ export class RequestValidationError extends HttpError {
   serializeErrors(): ErrorMessage[] {
     return this.errors
       .flatMap((error) => this.mapChildrenToValidationErrors(error))
-      .filter((error) => !!error.value || !!error.constraints)
+      .filter((error) => !!error.constraints && Object.entries(error.constraints).length > 0)
       .flatMap((error) => {
         return { message: Object.values(error.constraints!).join(', '), field: error.property };
       });
