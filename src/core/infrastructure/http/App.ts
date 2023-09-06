@@ -24,7 +24,7 @@ export class App {
     });
   }
 
-  private registerMiddleware() {
+  protected registerMiddleware() {
     this.app.use(loggerMiddleware);
 
     this.app.use(cors({ origin: '*' }));
@@ -34,21 +34,21 @@ export class App {
     this.app.use(express.urlencoded({ extended: true }));
   }
 
-  private registerControllers(controllers: any[]) {
+  protected registerControllers(controllers: any[]) {
     controllers.forEach((controller) => {
       const instance = this.resolve(controller);
       this.app.use('/', instance.router);
     });
   }
 
-  private resolve(klass: any): Controller {
+  protected resolve(klass: any): Controller {
     if (klass instanceof Controller) {
       return klass;
     }
     return Container.get<Controller>(klass);
   }
 
-  private registerErrorHandlers() {
+  protected registerErrorHandlers() {
     this.app.use(routeNotFoundMiddleware);
     this.app.use(errorMiddleware);
   }

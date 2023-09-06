@@ -4,20 +4,20 @@ import { Listener as ListenerContract } from '@/core/domain/events/Listener';
 import { Listener } from './Listener';
 
 export class Worker implements WorkerContract {
-  private listeners: ListenerContract[] = [];
+  protected listeners: ListenerContract[] = [];
 
   constructor(listeners: any[]) {
     this.registerListeners(listeners);
   }
 
-  private registerListeners(listeners: any[]) {
+  protected registerListeners(listeners: any[]) {
     listeners.forEach((listener) => {
       const instance = this.resolve(listener);
       this.listeners.push(instance);
     });
   }
 
-  private resolve(klass: any): ListenerContract {
+  protected resolve(klass: any): ListenerContract {
     if (klass instanceof Listener) {
       return klass;
     }
