@@ -9,14 +9,19 @@ export abstract class Listener<T> implements ListenerContract {
   abstract exchange: string;
 
   constructor() {
-    this.connection = amqp.connect([ process.env.APP_MQ! ]);
+    this.connection = amqp.connect([process.env.APP_MQ!]);
     this.channel = this.connection.createChannel({
       json: true,
       setup: (channel: Channel): any => this.setup(channel)
     });
   }
 
-  abstract setup(channel: Channel): any;
+  protected setup(channel: Channel): void {
+    channel.assertExchange(this.exchange, 'topic', { durable: false });
+    channel.assertQueue(this.queue);
+    channel.bindQueue(this.queue, this.exchange, this.topic);
+  }
+
   abstract onMessage(data: T, ack: Function): any;
 
   public listen() {

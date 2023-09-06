@@ -10,7 +10,7 @@ export abstract class Event<T> implements EventContract {
   abstract topic: string;
 
   constructor(payload: T) {
-    this.connection = amqp.connect([ process.env.APP_MQ! ]);
+    this.connection = amqp.connect([process.env.APP_MQ!]);
     this.channel = this.connection.createChannel({
       json: true,
       setup: (channel: Channel) => this.setup(channel)
@@ -19,11 +19,22 @@ export abstract class Event<T> implements EventContract {
     this.payload = payload;
   }
 
-  public setup(channel: Channel): void {
-    channel.assertExchange(this.exchange, 'topic', { durable: true });
+  protected setup(channel: Channel): void {
+    channel.assertExchange(this.exchange, 'topic', { durable: false });
   }
 
-  public publish() {
-    return this.channel.publish(this.exchange, this.topic, this.payload);
+  public async publish() {
+    const result = await this.channel.publish(this.exchange, this.topic, this.payload);
+    await this.close();
+    return result;
+  }
+
+  protected async close() {
+    if (this.channel) {
+      await this.channel.close();
+    }
+    if (this.connection) {
+      await this.connection.close();
+    }
   }
 }
