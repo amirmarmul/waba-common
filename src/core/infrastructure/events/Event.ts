@@ -1,3 +1,4 @@
+import { logger } from '@/core';
 import { Event as EventContract } from '@/core/domain/events/Event';
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 export { Channel, ChannelWrapper };
@@ -24,6 +25,7 @@ export abstract class Event<T> implements EventContract {
   }
 
   public async publish() {
+    logger.info('Publish message %s', this.constructor.name);
     const result = await this.channel.publish(this.exchange, this.topic, this.payload);
     await this.close();
     return result;

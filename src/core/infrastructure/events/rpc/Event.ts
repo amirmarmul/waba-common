@@ -1,5 +1,4 @@
-import { UniqueId } from '@/core/domain/UniqueId';
-import { Event as BaseEvent, Channel } from '@/core/infrastructure/events/Event';
+import { logger, UniqueId, Event as BaseEvent, Channel } from '@/core';
 
 export abstract class Event<T> extends BaseEvent<T> {
   readonly correlationId: string;
@@ -14,7 +13,8 @@ export abstract class Event<T> extends BaseEvent<T> {
   }
 
   public publish<Response>(): Promise<Response> {
-    return new Promise((resolve) => {
+    logger.info('Publish message %s', this.constructor.name);
+    return new Promise(resolve => {
       const correlationId = this.correlationId;
       this.channel.consume(this.exclusiveQueue, (msg) => {
         if (msg.properties.correlationId == correlationId) {
@@ -22,13 +22,9 @@ export abstract class Event<T> extends BaseEvent<T> {
           resolve(parsedMessage as Response);
           this.connection.close();
         }
-      }, {
-        // @ts-ignore
-        noAck: true
-      });
+      }, { noAck: true });
 
       this.channel.sendToQueue(this.queue, this.payload, {
-        // @ts-ignore
         correlationId: correlationId,
         replyTo: this.exclusiveQueue,
       });

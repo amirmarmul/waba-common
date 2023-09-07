@@ -1,4 +1,4 @@
-import { Listener as BaseListener, Channel } from '@/core/infrastructure/events/Listener';
+import { logger, Listener as BaseListener, Channel } from '@/core';
 
 export abstract class Listener<T> extends BaseListener<T> {
   public setup(channel: Channel) {
@@ -8,9 +8,9 @@ export abstract class Listener<T> extends BaseListener<T> {
   public listen() {
     return this.channel.consume(this.queue, async (msg) => {
       const parsedMessage = this.parseMessage(msg);
+      logger.info('Receive message %s', this.constructor.name, { parsedMessage });
       const res = await this.onMessage(parsedMessage, () => this.channel.ack);
       this.channel.sendToQueue(msg.properties.replyTo, res, {
-        // @ts-ignore
         correlationId: msg.properties.correlationId
       });
       this.channel.ack(msg);
