@@ -30,8 +30,8 @@ export class App {
     this.app.use(cors({ origin: '*' }));
     this.app.use(compression());
     this.app.use(helmet());
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json({ limit: '2gb' }));
+    this.app.use(express.urlencoded({ limit: '2gb', extended: true }));
   }
 
   protected registerControllers(controllers: any[]) {
