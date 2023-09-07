@@ -32,11 +32,13 @@ export abstract class Event<T> implements EventContract {
   }
 
   protected async close() {
-    if (this.channel) {
-      await this.channel.close();
-    }
-    if (this.connection) {
-      await this.connection.close();
-    }
+    setTimeout(async () => {
+      if (this.channel) {
+        await this.channel.close();
+      }
+      if (this.connection) {
+        await this.connection.close();
+      }
+    }, 500)
   }
 }
