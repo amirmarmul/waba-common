@@ -6,3 +6,4 @@ export * from './MessageTemplateCategoryUpdate';
 export * from './ChannelWhatsapp';
 export * from './Payment';
 export * from './BalanceMutation';
+export * from './Report';
