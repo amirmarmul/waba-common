@@ -6,7 +6,7 @@ export { Channel, ChannelWrapper };
 export abstract class Listener<T> implements ListenerContract {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
-  abstract service: string;
+  protected service: string;
   abstract exchange: string;
   abstract topic: string;
 
