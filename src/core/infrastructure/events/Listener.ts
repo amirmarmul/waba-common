@@ -6,8 +6,9 @@ export { Channel, ChannelWrapper };
 export abstract class Listener<T> implements ListenerContract {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
-  abstract topic: string;
+  abstract service: string;
   abstract exchange: string;
+  abstract topic: string;
 
   constructor() {
     this.connection = amqp.connect([process.env.APP_MQ!]);
@@ -35,6 +36,7 @@ export abstract class Listener<T> implements ListenerContract {
 
   get queue(): string {
     let queue: string[] = [];
+    queue.push(this.service);
     queue.push(this.constructor.name);
     queue.push(this.exchange);
     queue.push(this.topic);
