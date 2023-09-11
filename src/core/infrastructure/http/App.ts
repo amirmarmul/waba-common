@@ -2,6 +2,7 @@ import compression from 'compression';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import 'express-async-errors';
 
 import { Container } from '@/core/infrastructure/Container';
 import { Controller } from '@/core/infrastructure/Controller';
@@ -25,13 +26,14 @@ export class App {
   }
 
   protected registerMiddleware() {
+    this.app.disable('x-powered-by');
     this.app.use(loggerMiddleware);
 
     this.app.use(cors({ origin: '*' }));
     this.app.use(compression());
     this.app.use(helmet());
-    this.app.use(express.json({ limit: '2gb' }));
-    this.app.use(express.urlencoded({ limit: '2gb', extended: true }));
+    this.app.use(express.json({ limit: '2048mb' }));
+    this.app.use(express.urlencoded({ limit: '2048mb', extended: true }));
   }
 
   protected registerControllers(controllers: any[]) {
