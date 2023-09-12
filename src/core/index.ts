@@ -19,6 +19,14 @@ export * from '@/core/infrastructure/Mapper';
 export * from '@/core/infrastructure/Repo';
 
 export * from '@/core/errors/AppError';
+export * from '@/core/errors/AuthenticationTokenMissingError';
+export * from '@/core/errors/BadRequestError';
+export * from '@/core/errors/NotAuthorizedError';
+export * from '@/core/errors/NotFoundError';
+export * from '@/core/errors/RequestValidationError';
+export * from '@/core/errors/ValidationError';
+export * from '@/core/errors/WrongAuthenticationTokenError';
+export * from '@/core/errors/WrongCredentialsError';
 
 export * from '@/core/utils/Hash';
 export * from '@/core/utils/commands';
