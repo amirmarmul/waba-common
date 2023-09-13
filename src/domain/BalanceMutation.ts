@@ -6,6 +6,8 @@ export enum BalanceMutationType {
 export interface BalanceMutation {
   accountId: string;
   account?: any;
+  creatorId?: string;
+  creatorName?: string;
   amount: number;
   resource: string;
   resourceName: string;
