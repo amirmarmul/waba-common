@@ -1,7 +1,7 @@
 import TokenGuard from './TokenGuard';
 import UserProvider from './UserProvider';
 
-class Auth {
+export class Auth {
   private static _instance: Auth;
   private _provider: UserProvider;
   private _request: any;
@@ -11,7 +11,7 @@ class Auth {
   }
 
   static getInstance() {
-    if (!this._instance){
+    if (!this._instance) {
       this._instance = new Auth();
     }
 

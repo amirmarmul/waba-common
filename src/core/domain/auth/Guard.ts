@@ -1,6 +1,6 @@
 import Authenticable from './Authenticable';
 
-interface Guard {
+export interface Guard {
   /**
    * Determine if the current user is authenticated.
    */
@@ -19,7 +19,7 @@ interface Guard {
   /**
    * Get the currently authenticated user.
    */
-  user(): Promise<Authenticable|null>;
+  user(): Promise<Authenticable | null>;
 }
 
 export default Guard;

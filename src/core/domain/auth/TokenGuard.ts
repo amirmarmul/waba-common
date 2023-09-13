@@ -3,7 +3,7 @@ import Authenticable from './Authenticable';
 import Guard from './Guard';
 import UserProvider from './UserProvider';
 
-class TokenGuard implements Guard {
+export class TokenGuard implements Guard {
   /**
    * The request instance.
    */
