@@ -4,6 +4,12 @@ export * from '@/core/domain/UniqueId';
 export * from '@/core/domain/UseCase';
 export * from '@/core/domain/ValueObject';
 
+export * from '@/core/domain/auth/Auth';
+export * from '@/core/domain/auth/Authenticable';
+export * from '@/core/domain/auth/Guard';
+export * from '@/core/domain/auth/TokenGuard';
+export * from '@/core/domain/auth/UserProvider';
+
 export * from '@/core/infrastructure/http/App';
 
 export * from '@/core/infrastructure/events/Event';

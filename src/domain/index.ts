@@ -7,3 +7,4 @@ export * from './ChannelWhatsapp';
 export * from './Payment';
 export * from './BalanceMutation';
 export * from './Report';
+export * from './User';
