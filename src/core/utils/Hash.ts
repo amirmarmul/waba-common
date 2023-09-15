@@ -6,7 +6,7 @@ export class Hash {
     return Hash.encrypt(text, salt) + salt;
   };
 
-  static compare = (text: string, hash: string): Boolean => {
+  static compare = (text: string, hash: string): boolean => {
     const salt = hash.slice(64);
     const originalTextHash = hash.slice(0, 64);
     const currentTextHash = Hash.encrypt(text, salt);
