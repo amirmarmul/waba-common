@@ -10,7 +10,7 @@ export abstract class Listener<T> extends BaseListener<T> {
       const parsedMessage = this.parseMessage(msg);
       logger.info('Receive message %s', this.constructor.name, { parsedMessage });
       const res = await this.onMessage(parsedMessage, () => this.channel.ack);
-      this.channel.sendToQueue(msg.properties.replyTo, res, {
+      await this.channel.sendToQueue(msg.properties.replyTo, res, {
         correlationId: msg.properties.correlationId
       });
       this.channel.ack(msg);
