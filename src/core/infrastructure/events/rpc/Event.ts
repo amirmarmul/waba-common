@@ -16,13 +16,18 @@ export abstract class Event<T> extends BaseEvent<T> {
     logger.info('Publish message %s', this.constructor.name);
     return new Promise(resolve => {
       const correlationId = this.correlationId;
-      this.channel.consume(this.exclusiveQueue, async (msg) => {
+      const handleMessage = async (msg: any) => {
         if (msg.properties.correlationId == correlationId) {
           const parsedMessage = this.parseMessage(msg);
-          resolve(parsedMessage as Response);
+
+          this.channel.removeListener('message', handleMessage);
           await this.close()
+
+          resolve(parsedMessage as Response);
         }
-      }, { noAck: true });
+      }
+
+      this.channel.consume(this.exclusiveQueue, handleMessage, { noAck: true });
 
       this.channel.sendToQueue(this.queue, this.payload, {
         correlationId: correlationId,
