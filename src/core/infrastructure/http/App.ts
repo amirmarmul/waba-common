@@ -9,6 +9,7 @@ import { Controller } from '@/core/infrastructure/Controller';
 import { loggerMiddleware } from '@/core/infrastructure/http/middleware/loggerMiddleware';
 import { routeNotFoundMiddleware } from '@/core/infrastructure/http/middleware/routeNotFoundMiddleware';
 import { errorMiddleware } from '@/core/infrastructure/http/middleware/errorMiddleware';
+import { alwaysAcceptJsonMiddleware } from './middleware/alwaysAcceptJsonMiddleware';
 
 export class App {
   protected app: express.Application = express();
@@ -28,6 +29,7 @@ export class App {
   protected registerMiddleware() {
     this.app.disable('x-powered-by');
     this.app.use(loggerMiddleware);
+    this.app.use(alwaysAcceptJsonMiddleware);
 
     this.app.use(cors({ origin: '*' }));
     this.app.use(compression());
