@@ -24,13 +24,13 @@ export abstract class Listener<T> implements ListenerContract {
     channel.bindQueue(this.queue, this.exchange, this.topic);
   }
 
-  abstract onMessage(data: T, ack: Function): any;
+  abstract onMessage(data: T, ack: Function, nack?: Function): any;
 
   public listen() {
     return this.channel.consume(this.queue, (msg) => {
       const parsedMessage = this.parseMessage(msg);
       logger.info('Receive message %s', this.constructor.name, { parsedMessage });
-      this.onMessage(parsedMessage, () => this.channel.ack(msg));
+      this.onMessage(parsedMessage, () => this.channel.ack(msg), () => this.channel.nack(msg));
     });
   }
 
