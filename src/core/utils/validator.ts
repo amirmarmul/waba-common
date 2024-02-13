@@ -14,23 +14,36 @@ export function transformAndValidate<T extends object>(klass: Klass<T>, object: 
   return classObject;
 }
 
-
 function normalizeObject(object: any) {
+  console.log(JSON.stringify({ object }))
   let normalObject: any = {};
   for (let key in object) {
     const newKey = key.replace(/\[(.*?)\]/, '$1');
     if (typeof object[key] !== 'object') {
       normalObject[newKey] = object[key];
-    } else if (Array.isArray(object[key])) {
-      normalObject[newKey] = object[key].map((obj: any) => {
-        if (typeof obj !== 'object') return obj;
-        return normalizeObject(obj)
-      });
-    } else if (object.hasOwnProperty(key)) {
+    }
+    else if (Array.isArray(object[key])) {
+      normalObject[newKey] = normilizeArray(object[key])
+    }
+    else if (object.hasOwnProperty(key)) {
       normalObject[newKey] = normalizeObject(object[key]);
     }
   }
   return normalObject;
+}
+
+function normilizeArray(array: any) {
+  let normalArray = [];
+  normalArray = array.map((item: any) => {
+    if (typeof item !== 'object') {
+      return item;
+    } else if (Array.isArray(item)) {
+      return normilizeArray(item);
+    } else {
+      return normalizeObject(item);
+    }
+  });
+  return normalArray;
 }
 
 export default transformAndValidate;
