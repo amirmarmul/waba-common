@@ -15,7 +15,6 @@ export function transformAndValidate<T extends object>(klass: Klass<T>, object: 
 }
 
 function normalizeObject(object: any) {
-  console.log(JSON.stringify({ object }))
   let normalObject: any = {};
   for (let key in object) {
     const newKey = key.replace(/\[(.*?)\]/, '$1');
