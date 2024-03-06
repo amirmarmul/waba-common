@@ -3,6 +3,7 @@ import { logger, Listener as BaseListener, Channel } from '@/core';
 export abstract class Listener<T> extends BaseListener<T> {
   public setup(channel: Channel) {
     channel.assertQueue(this.queue, { durable: true });
+    channel.prefetch(1);
   }
 
   public listen() {

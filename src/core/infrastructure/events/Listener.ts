@@ -22,6 +22,7 @@ export abstract class Listener<T> implements ListenerContract {
     channel.assertExchange(this.exchange, 'topic', { durable: false });
     channel.assertQueue(this.queue);
     channel.bindQueue(this.queue, this.exchange, this.topic);
+    channel.prefetch(1);
   }
 
   abstract onMessage(data: T, ack: Function, nack?: Function): any;
