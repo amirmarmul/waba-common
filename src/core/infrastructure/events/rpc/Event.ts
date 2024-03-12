@@ -62,4 +62,17 @@ export abstract class Event<T> extends BaseEvent<T> {
     const json = msg.content.toString();
     return JSON.parse(json);
   }
+
+  protected async close() {
+    setTimeout(async () => {
+      if (this.channel) {
+        this.channel.deleteQueue(this.exclusiveQueue).then(() => {
+          console.log('The response queue is cleared');
+        }).catch((err) => {
+          console.error('Failed to delete queue: ', err.message);
+        });
+        await this.channel.close();
+      }
+    }, 500);
+  }
 }
