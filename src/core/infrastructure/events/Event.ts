@@ -1,6 +1,7 @@
 import { logger } from '@/core';
 import { Event as EventContract } from '@/core/domain/events/Event';
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
+import { Connection } from './Connection';
 export { Channel, ChannelWrapper };
 
 export abstract class Event<T> implements EventContract {
@@ -11,7 +12,7 @@ export abstract class Event<T> implements EventContract {
   abstract topic: string;
 
   constructor(payload: T) {
-    this.connection = amqp.connect([process.env.APP_MQ!]);
+    this.connection = Connection.getConnection();
 
     this.payload = payload;
   }

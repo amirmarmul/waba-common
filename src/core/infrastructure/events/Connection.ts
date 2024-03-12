@@ -1,28 +1,21 @@
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
+
 export { Channel, ChannelWrapper };
 
 export class Connection {
-  protected static instance: Connection;
-  public static connection: AmqpConnectionManager;
+  private static connection: AmqpConnectionManager;
 
-  constructor() {
-    // 
+  private constructor() {
+    Connection.connection = amqp.connect([process.env.APP_MQ!]);
+    Connection.connection.on('error', (err) => {
+      console.error('AMQP connection error:', err.message);
+    });
   }
 
-  static getInstance(): Connection {
-    if (!this.instance) {
-      this.instance = new Connection();
+  static getConnection(): AmqpConnectionManager {
+    if (!Connection.connection) {
+      new Connection();
     }
-
-    return this.instance as Connection;
-  }
-
-  static init(): AmqpConnectionManager {
-    // @ts-ignore
-    if (!Connection.getInstance().connection) {
-      this.connection = amqp.connect([process.env.APP_MQ!]);
-    }
-
-    return this.connection;
+    return Connection.connection;
   }
 }

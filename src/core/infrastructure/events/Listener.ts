@@ -13,7 +13,7 @@ export abstract class Listener<T> implements ListenerContract {
   abstract topic: string;
 
   constructor() {
-    this.connection = Connection.init();
+    this.connection = Connection.getConnection();
   }
 
   init() {
