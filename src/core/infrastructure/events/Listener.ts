@@ -1,9 +1,11 @@
 import { logger } from '@/core';
 import { Listener as ListenerContract } from '@/core/domain/events/Listener';
-import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
+import { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
+import { Connection } from './Connection';
 export { Channel, ChannelWrapper };
 
 export abstract class Listener<T> implements ListenerContract {
+  protected static instance: Listener<any>;
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
   protected service: string;
@@ -11,11 +13,16 @@ export abstract class Listener<T> implements ListenerContract {
   abstract topic: string;
 
   constructor() {
-    this.connection = amqp.connect([process.env.APP_MQ!]);
+    this.connection = Connection.init();
+  }
+
+  init() {
     this.channel = this.connection.createChannel({
       json: true,
       setup: (channel: Channel): any => this.setup(channel)
     });
+
+    return this;
   }
 
   protected setup(channel: Channel): void {

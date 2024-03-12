@@ -12,12 +12,17 @@ export abstract class Event<T> implements EventContract {
 
   constructor(payload: T) {
     this.connection = amqp.connect([process.env.APP_MQ!]);
-    this.channel = this.connection.createChannel({
-      json: true,
-      setup: (channel: Channel) => this.setup(channel)
-    });
 
     this.payload = payload;
+  }
+
+  init() {
+    this.channel = this.connection.createChannel({
+      json: true,
+      setup: (channel: Channel): any => this.setup(channel)
+    });
+
+    return this;
   }
 
   protected setup(channel: Channel): void {
@@ -36,9 +41,9 @@ export abstract class Event<T> implements EventContract {
       if (this.channel) {
         await this.channel.close();
       }
-      if (this.connection) {
-        await this.connection.close();
-      }
+      // if (this.connection) {
+      //   await this.connection.close();
+      // }
     }, 500)
   }
 }

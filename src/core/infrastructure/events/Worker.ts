@@ -27,7 +27,7 @@ export class Worker implements WorkerContract {
   start(): void {
     console.info('Register listeners %s', this.listeners);
     for (const listener of this.listeners) {
-      listener.listen();
+      listener.init().listen();
     }
   }
 }
