@@ -67,17 +67,16 @@ export abstract class Event<T> extends BaseEvent<T> {
 
   protected async close() {
     setTimeout(async () => {
-      try {
-        if (this.channel) {
-          this.channel.deleteQueue(this.exclusiveQueue).then(() => {
-            console.log('The response queue is cleared');
-          }).catch((err) => {
-            console.error('Failed to delete queue: ', err.message);
-          });
-          await this.channel.close();
-        }
-      } catch (err: any) {
-        console.error('Failed to close rpc channel: ', err.message);
+      if (this.channel) {
+        this.channel.deleteQueue(this.exclusiveQueue).then(() => {
+          console.log('The response queue is cleared');
+        }).catch((err) => {
+          console.error('Failed to delete queue: ', err.message);
+        });
+        
+        await this.channel.close().catch((reason) => {
+          console.error('Failed to close rpc channel: ', reason);
+        });
       }
     }, 1000);
   }

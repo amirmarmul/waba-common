@@ -42,12 +42,10 @@ export abstract class Event<T> implements EventContract {
 
   protected async close() {
     setTimeout(async () => {
-      try {
-        if (this.channel) {
-          await this.channel.close();
-        }
-      } catch (err: any) {
-        console.error('Failed to close channel: ', err.message);
+      if (this.channel) {
+        await this.channel.close().catch((reason) => {
+          console.error('Failed to close channel: ', reason);
+        });
       }
     }, 1000)
   }
