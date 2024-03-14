@@ -32,6 +32,8 @@ export abstract class Event<T> extends BaseEvent<T> {
       this.channel.sendToQueue(this.queue, this.payload, {
         correlationId: correlationId,
         replyTo: this.exclusiveQueue,
+        deliveryMode: 2,
+        persistent: true,
       });
     });
   }
@@ -65,14 +67,18 @@ export abstract class Event<T> extends BaseEvent<T> {
 
   protected async close() {
     setTimeout(async () => {
-      if (this.channel) {
-        this.channel.deleteQueue(this.exclusiveQueue).then(() => {
-          console.log('The response queue is cleared');
-        }).catch((err) => {
-          console.error('Failed to delete queue: ', err.message);
-        });
-        await this.channel.close();
+      try {
+        if (this.channel) {
+          this.channel.deleteQueue(this.exclusiveQueue).then(() => {
+            console.log('The response queue is cleared');
+          }).catch((err) => {
+            console.error('Failed to delete queue: ', err.message);
+          });
+          await this.channel.close();
+        }
+      } catch (err: any) {
+        console.error('Failed to close rpc channel: ', err.message);
       }
-    }, 500);
+    }, 1000);
   }
 }

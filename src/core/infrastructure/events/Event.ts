@@ -32,16 +32,23 @@ export abstract class Event<T> implements EventContract {
 
   public async publish() {
     logger.info('Publish message %s', this.constructor.name);
-    const result = await this.channel.publish(this.exchange, this.topic, this.payload);
+    const result = await this.channel.publish(this.exchange, this.topic, this.payload, {
+      deliveryMode: 2,
+      persistent: true,
+    });
     await this.close();
     return result;
   }
 
   protected async close() {
     setTimeout(async () => {
-      if (this.channel) {
-        await this.channel.close();
+      try {
+        if (this.channel) {
+          await this.channel.close();
+        }
+      } catch (err: any) {
+        console.error('Failed to close channel: ', err.message);
       }
-    }, 500)
+    }, 1000)
   }
 }
