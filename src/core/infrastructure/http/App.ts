@@ -32,7 +32,7 @@ export class App {
     this.app.use(alwaysAcceptJsonMiddleware);
 
     this.app.use(cors({ origin: '*' }));
-    this.app.use(compression());
+    // this.app.use(compression());
     this.app.use(helmet());
     this.app.use(express.json({ limit: '2048mb' }));
     this.app.use(express.urlencoded({ limit: '2048mb', extended: true }));
