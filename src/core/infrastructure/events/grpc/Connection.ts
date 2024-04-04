@@ -23,15 +23,9 @@ export class Connection {
     }
   }
 
-  static async getConnection(): Promise<Root> {
+  static getConnection(exchange: string): Root {
     if (!Connection.connection || !Connection.server) {
-      await new Promise<void>((resolve) => {
-        const connection = new Connection(Connection.exchange);
-        // @ts-ignore
-        connection.server!.once('listening', () => {
-          resolve();
-        });
-      });
+      new Connection(exchange);
     }
     return Connection.connection!;
   }

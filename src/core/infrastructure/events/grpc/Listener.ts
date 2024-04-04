@@ -22,8 +22,7 @@ export abstract class Listener<T>  {
   }
 
   protected async setup() {
-    this.connection = await Connection.getConnection();
-
+    this.connection = Connection.getConnection(this.exchange);
     const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
     this.connection.add(service);
   }
