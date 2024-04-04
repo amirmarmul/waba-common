@@ -18,6 +18,8 @@ export * from '@/core/infrastructure/events/Worker';
 
 export { Event as EventRpc } from '@/core/infrastructure/events/rpc/Event';
 export { Listener as ListenerRpc } from '@/core/infrastructure/events/rpc/Listener';
+export { Event as EventGrpc } from '@/core/infrastructure/events/grpc/Event';
+export { Listener as ListenerGrpc } from '@/core/infrastructure/events/grpc/Listener';
 
 export * from '@/core/infrastructure/Container';
 export * from '@/core/infrastructure/Controller';
