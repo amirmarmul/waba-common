@@ -15,7 +15,7 @@ export class Connection {
 
     if (!Connection.server) {
       Connection.server = new Server();
-      Connection.server.bindAsync(process.env.APP_HOST!, ServerCredentials.createInsecure(), () => {
+      Connection.server.bindAsync(process.env.APP_GRPC!, ServerCredentials.createInsecure(), () => {
         Connection.server!.start();
       });
     }
