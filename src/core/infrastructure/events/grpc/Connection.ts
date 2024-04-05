@@ -12,12 +12,26 @@ export class Connection {
     const Listener = new Type("Listener").add(new Field("message", 1, "string"));
 
     Connection.connection.add(Event).add(Listener);
+
+    if (!Connection.server) {
+      Connection.server = new Server();
+      Connection.server.bindAsync(process.env.APP_HOST!, ServerCredentials.createInsecure(), () => {
+        Connection.server!.start();
+      });
+    }
   }
 
   static getConnection(): Root {
-    if (!Connection.connection || !Connection.server) {
+    if (!Connection.connection) {
       new Connection();
     }
     return Connection.connection!;
+  }
+
+  static getServer(): Server {
+    if (!Connection.server) {
+      new Connection();
+    }
+    return Connection.server!;
   }
 }

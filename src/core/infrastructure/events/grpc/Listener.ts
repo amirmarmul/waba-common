@@ -1,23 +1,24 @@
-import { logger } from '@/core';
-import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { Method, Root, Service } from 'protobufjs';
 import { Connection } from './Connection';
+import { Server, loadPackageDefinition } from '@grpc/grpc-js';
 
 export abstract class Listener<T> {
   protected connection: Root;
+  protected server: Server;
   protected channel: any;
   protected payload: T;
   abstract exchange: string;
 
   constructor() {
     this.connection = Connection.getConnection();
+    this.server = Connection.getServer();
     this.setup();
   }
 
   init() {
     const packageDefinition = protoLoader.fromJSON(this.connection.toJSON())
-    this.channel = grpc.loadPackageDefinition(packageDefinition);
+    this.channel = loadPackageDefinition(packageDefinition);
 
     return this;
   }
@@ -30,16 +31,12 @@ export abstract class Listener<T> {
   abstract onMessage(data: T): Promise<any>;
 
   public async listen() {
-    const server = new grpc.Server();
-    server.addService(this.channel[this.constructorName].service, {
+    this.server.addService(this.channel[this.constructorName].service, {
       publish: async (call: any, callback: Function) => {
         const parsedMessage = this.parseMessage(call.request.data);
         const res = await this.onMessage(parsedMessage);
         callback(null, { message: JSON.stringify(res) });
       }
-    });
-    server.bindAsync(this.exchange, grpc.ServerCredentials.createInsecure(), () => {
-      server.start();
     });
   }
 
