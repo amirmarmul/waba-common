@@ -7,9 +7,10 @@ export abstract class Event<T> {
   protected connection: Root;
   protected channel: any;
   protected payload: T;
-  abstract exchange: string;
+  protected exchange: string;
 
   constructor(payload: T) {
+    this.connection = Connection.getConnection(this.exchange);
     this.payload = payload;
     this.setup();
   }
@@ -22,8 +23,7 @@ export abstract class Event<T> {
     return this;
   }
 
-  protected async setup() {
-    this.connection = Connection.getConnection(this.exchange);
+  protected setup() {
     const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
     this.connection.add(service);
   }

@@ -4,13 +4,14 @@ import * as protoLoader from '@grpc/proto-loader';
 import { Method, Root, Service } from 'protobufjs';
 import { Connection } from './Connection';
 
-export abstract class Listener<T>  {
+export abstract class Listener<T> {
   protected connection: Root;
   protected channel: any;
   protected payload: T;
-  abstract exchange: string;
+  protected exchange: string;
 
   constructor() {
+    this.connection = Connection.getConnection(this.exchange);
     this.setup();
   }
 
@@ -22,7 +23,6 @@ export abstract class Listener<T>  {
   }
 
   protected async setup() {
-    this.connection = Connection.getConnection(this.exchange);
     const service = new Service(this.constructorName).add(new Method("Publish", "rpc", 'Event', 'Listener'));
     this.connection.add(service);
   }
@@ -37,9 +37,6 @@ export abstract class Listener<T>  {
         const res = await this.onMessage(parsedMessage);
         callback(null, { message: JSON.stringify(res) });
       }
-    });
-    return server.bindAsync(this.exchange, grpc.ServerCredentials.createInsecure(), () => {
-      server.start();
     });
   }
 
