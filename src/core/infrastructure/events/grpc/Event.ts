@@ -22,7 +22,7 @@ export abstract class Event<T> {
     return this;
   }
 
-  protected setup() {
+  setup() {
     const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
     this.connection.add(service);
   }
