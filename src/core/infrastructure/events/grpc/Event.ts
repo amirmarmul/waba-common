@@ -22,12 +22,12 @@ export abstract class Event<T> {
     return this;
   }
 
-  setup() {
+  protected setup() {
     const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
     this.connection.add(service);
   }
 
-  protected publish<Response>(): Promise<Response> {
+  publish<Response>(): Promise<Response> {
     return new Promise((resolve, reject) => {
       const handleMessage = (err: any, response: any) => {
         if (err) {
