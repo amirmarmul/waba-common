@@ -7,7 +7,6 @@ export abstract class Event<T> {
   protected connection: Root;
   protected channel: any;
   protected payload: T;
-  protected exchange: string;
 
   constructor(payload: T) {
     this.connection = Connection.getConnection(this.exchange);
@@ -42,6 +41,10 @@ export abstract class Event<T> {
 
       this.channel.publish({ data: JSON.stringify(this.payload) }, handleMessage);
     });
+  }
+
+  get exchange() {
+    return '';
   }
 
   protected parseMessage(message: any) {

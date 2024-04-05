@@ -8,7 +8,6 @@ export abstract class Listener<T> {
   protected connection: Root;
   protected channel: any;
   protected payload: T;
-  protected exchange: string;
 
   constructor() {
     this.connection = Connection.getConnection(this.exchange);
@@ -38,6 +37,10 @@ export abstract class Listener<T> {
         callback(null, { message: JSON.stringify(res) });
       }
     });
+  }
+
+  get exchange() {
+    return '';
   }
 
   get constructorName() {
