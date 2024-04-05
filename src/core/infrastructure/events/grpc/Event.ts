@@ -9,7 +9,7 @@ export abstract class Event<T> {
   protected payload: T;
 
   constructor(payload: T) {
-    this.connection = Connection.getConnection(this.exchange);
+    this.connection = Connection.getConnection();
     this.payload = payload;
     this.setup();
   }

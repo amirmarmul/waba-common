@@ -8,9 +8,10 @@ export abstract class Listener<T> {
   protected connection: Root;
   protected channel: any;
   protected payload: T;
+  abstract exchange: string;
 
   constructor() {
-    this.connection = Connection.getConnection(this.exchange);
+    this.connection = Connection.getConnection();
     this.setup();
   }
 
@@ -37,10 +38,9 @@ export abstract class Listener<T> {
         callback(null, { message: JSON.stringify(res) });
       }
     });
-  }
-
-  get exchange() {
-    return '';
+    server.bindAsync(this.exchange, grpc.ServerCredentials.createInsecure(), () => {
+      server.start();
+    });
   }
 
   get constructorName() {
