@@ -24,8 +24,10 @@ export abstract class Listener<T> {
   }
 
   protected async setup() {
-    const service = new Service(this.constructorName).add(new Method("Publish", "rpc", 'Event', 'Listener'));
-    this.connection.add(service);
+    if (!this.connection.get(this.constructorName)) {
+      const service = new Service(this.constructorName).add(new Method("Publish", "rpc", 'Event', 'Listener'));
+      this.connection.add(service);
+    }
   }
 
   abstract onMessage(data: T): Promise<any>;

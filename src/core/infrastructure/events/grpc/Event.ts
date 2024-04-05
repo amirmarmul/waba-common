@@ -24,8 +24,10 @@ export abstract class Event<T> {
   }
 
   protected setup() {
-    const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
-    this.connection.add(service);
+    if (!this.connection.get(this.constructor.name)) {
+      const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
+      this.connection.add(service);
+    }
   }
 
   publish<Response>(): Promise<Response> {
