@@ -2,6 +2,7 @@ import * as protoLoader from '@grpc/proto-loader';
 import { Method, Root, Service } from 'protobufjs';
 import { Connection } from './Connection';
 import { Server, loadPackageDefinition } from '@grpc/grpc-js';
+import logger from '@/core/utils/logger';
 
 export abstract class Listener<T> {
   protected connection: Root;
@@ -36,6 +37,7 @@ export abstract class Listener<T> {
     this.server.addService(this.channel[this.constructorName].service, {
       publish: async (call: any, callback: Function) => {
         const parsedMessage = this.parseMessage(call.request.data);
+        logger.info('Receive message %s', this.constructor.name, { parsedMessage });
         const res = await this.onMessage(parsedMessage);
         callback(null, { message: JSON.stringify(res) });
       }

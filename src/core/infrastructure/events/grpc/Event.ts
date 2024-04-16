@@ -1,7 +1,9 @@
+
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { Method, Root, Service } from "protobufjs";
 import { Connection } from "./Connection";
+import logger from '@/core/utils/logger';
 
 export abstract class Event<T> {
   protected connection: Root;
@@ -31,6 +33,7 @@ export abstract class Event<T> {
   }
 
   publish<Response>(): Promise<Response> {
+    logger.info('Publish message %s', this.constructor.name);
     return new Promise((resolve, reject) => {
       const handleMessage = (err: any, response: any) => {
         if (err) {
