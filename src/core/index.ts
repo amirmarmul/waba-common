@@ -37,6 +37,7 @@ export * from '@/core/errors/WrongAuthenticationTokenError';
 export * from '@/core/errors/WrongCredentialsError';
 
 export * from '@/core/utils/Hash';
+export * from '@/core/utils/Crypto';
 export * from '@/core/utils/commands';
 export * from '@/core/utils/events';
 export * from '@/core/utils/logger';
