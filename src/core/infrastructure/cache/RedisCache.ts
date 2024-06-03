@@ -10,8 +10,8 @@ export class RedisCache implements CacheContract {
   protected readonly redis: Redis;
   private readonly namespace: string;
 
-  constructor(redisConnection: Redis) {
-    this.redis = redisConnection;
+  constructor() {
+    this.redis = new Redis(process.env.REDIS_URL!);
     this.TTL = DEFAULT_CACHE_TIME_IN_SECONDS;
     this.namespace = DEFAULT_NAMESPACE;
   }
