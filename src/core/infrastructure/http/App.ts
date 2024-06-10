@@ -9,7 +9,7 @@ import { Controller } from '@/core/infrastructure/Controller';
 import { loggerMiddleware } from '@/core/infrastructure/http/middleware/loggerMiddleware';
 import { routeNotFoundMiddleware } from '@/core/infrastructure/http/middleware/routeNotFoundMiddleware';
 import { errorMiddleware } from '@/core/infrastructure/http/middleware/errorMiddleware';
-import { alwaysAcceptJsonMiddleware } from './middleware/alwaysAcceptJsonMiddleware';
+import { alwaysAcceptJsonMiddleware } from '@/core/infrastructure/http/middleware/alwaysAcceptJsonMiddleware';
 
 export class App {
   protected app: express.Application = express();
