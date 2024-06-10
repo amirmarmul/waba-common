@@ -1,4 +1,4 @@
-import { randomBytes, scryptSync } from 'crypto';
+import { randomBytes, scryptSync, createHash } from 'crypto';
 
 export class Hash {
   static make = (text: string): string => {
@@ -12,6 +12,10 @@ export class Hash {
     const currentTextHash = Hash.encrypt(text, salt);
     return originalTextHash === currentTextHash;
   };
+
+  static sha256 = (text: string): string => {
+    return createHash('sha256').update(text).digest('hex');
+  }
 
   private static encrypt = (text: string, salt: string) => {
     return scryptSync(text, salt, 32).toString('hex');
