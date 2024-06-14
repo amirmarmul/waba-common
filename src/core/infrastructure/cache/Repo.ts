@@ -2,137 +2,137 @@ import { Repo as Cache } from '@/core/domain/cache/Repo';
 import { Store } from '@/core/domain/cache/Store';
 
 export class Repo implements Cache {
-    protected store: Store;
-    protected ttl: number;
+  protected store: Store;
+  protected ttl: number;
 
-    constructor(store: Store) {
-        this.store = store;
-        this.ttl = 30;
+  constructor(store: Store) {
+    this.store = store;
+    this.ttl = 30;
+  }
+
+  async has(key: string): Promise<boolean> {
+    return !! await this.get(key);
+  }
+
+  async missing(key: string): Promise<boolean> {
+    return ! await this.has(key);
+  }
+
+  async get<T>(key: string): Promise<T | null> {
+    const value = await this.store.get(this.itemKey(key));
+
+    return value as T;
+  }
+
+  async pull<T>(key: string, _default: any): Promise<T | null> {
+    const value = await this.get(key);
+
+    if (value) {
+      await this.forget(key);
     }
 
-    async has(key: string): Promise<boolean> {
-        return !! await this.get(key);
+    return value || await this.value(_default);
+  }
+
+  async put(key: string, value: any, ttl: number = this.ttl): Promise<boolean> {
+    const seconds = this.getSeconds(ttl);
+
+    if (seconds <= 0) {
+      return await this.forget(key);
     }
 
-    async missing(key: string): Promise<boolean> {
-        return ! await this.has(key);
-    }
+    const result = await this.store.put(this.itemKey(key), value, seconds);
 
-    async get<T>(key: string): Promise<T | null> {
-        const value = await this.store.get(this.itemKey(key));
+    return result;
+  }
 
-        return value as T;
-    }
+  async add(key: string, value: any, ttl?: number | undefined): Promise<boolean> {
+    let seconds = undefined;
 
-    async pull<T>(key: string, _default: any): Promise<T | null> {
-        const value = await this.get(key);
+    if (!ttl) {
+      seconds = this.getSeconds(ttl);
 
-        if (value) {
-            await this.forget(key);
-        }
-
-        return value || await this.value(_default);
-    }
-
-    async put(key: string, value: any, ttl: number = this.ttl): Promise<boolean> {
-        const seconds = this.getSeconds(ttl);
-
-        if (seconds <= 0) {
-            return await this.forget(key);
-        }
-
-        const result = await this.store.put(this.itemKey(key), value, seconds);
-
-        return result;
-    }
-
-    async add(key: string, value: any, ttl?: number | undefined): Promise<boolean> {
-        let seconds = undefined;
-
-        if (!ttl) {
-            seconds = this.getSeconds(ttl);
-
-            if (seconds <= 0) {
-                return false;
-            }
-        }
-
-        if (await this.missing(key)) {
-            return await this.put(key, value, seconds);
-        }
-
+      if (seconds <= 0) {
         return false;
+      }
     }
 
-    async forever(key: string, value: unknown): Promise<boolean> {
-        const result = await this.store.forever(this.itemKey(key), value);
-
-        return result;
+    if (await this.missing(key)) {
+      return await this.put(key, value, seconds);
     }
 
-    async remember<T>(key: string, callback: Function, ttl: number = this.ttl): Promise<T> {
-        let value = await this.get(key);
+    return false;
+  }
 
-        if (value) {
-            return value as T;
-        }
+  async forever(key: string, value: unknown): Promise<boolean> {
+    const result = await this.store.forever(this.itemKey(key), value);
 
-        value = await this.value(callback);
+    return result;
+  }
 
-        await this.put(key, value, ttl);
+  async remember<T>(key: string, callback: Function, ttl: number = this.ttl): Promise<T> {
+    let value = await this.get(key);
 
-        return value as T;
+    if (value) {
+      return value as T;
     }
 
-    async rememberForever<T>(key: string, callback: Function): Promise<T> {
-        let value = await this.get(key);
+    value = await this.value(callback);
 
-        if (value) {
-            return value as T;
-        }
+    await this.put(key, value, ttl);
 
-        value = await this.value(callback())
+    return value as T;
+  }
 
-        await this.forever(key, value);
+  async rememberForever<T>(key: string, callback: Function): Promise<T> {
+    let value = await this.get(key);
 
-        return value as T;
+    if (value) {
+      return value as T;
     }
 
-    async forget(key: string): Promise<boolean> {
-        const result = await this.store.forget(this.itemKey(key));
+    value = await this.value(callback())
 
-        return result;
-    }
+    await this.forever(key, value);
 
-    getDefaultCacheTime(): number {
-        return this.ttl;
-    }
+    return value as T;
+  }
 
-    setDefaultCacheTime(ttl: number): Repo {
-        this.ttl = ttl;
+  async forget(key: string): Promise<boolean> {
+    const result = await this.store.forget(this.itemKey(key));
 
-        return this;
-    }
+    return result;
+  }
 
-    getStore(): Store {
-        return this.store;
-    }
+  getDefaultCacheTime(): number {
+    return this.ttl;
+  }
 
-    setStore(store: Store): Repo {
-        this.store = store;
+  setDefaultCacheTime(ttl: number): Repo {
+    this.ttl = ttl;
 
-        return this;
-    }
+    return this;
+  }
 
-    protected itemKey(key: string): string {
-        return this.store.getPrefix() + key;
-    }
+  getStore(): Store {
+    return this.store;
+  }
 
-    protected getSeconds(ttl: any): number {
-        return ttl;
-    }
+  setStore(store: Store): Repo {
+    this.store = store;
 
-    private async value(value: any): Promise<any> {
-        return typeof value === 'function' ? await value() : value;
-    }
+    return this;
+  }
+
+  protected itemKey(key: string): string {
+    return this.store.getPrefix() + key;
+  }
+
+  protected getSeconds(ttl: any): number {
+    return ttl;
+  }
+
+  private async value(value: any): Promise<any> {
+    return typeof value === 'function' ? await value() : value;
+  }
 }
