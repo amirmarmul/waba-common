@@ -29,6 +29,8 @@ export * from '@/core/infrastructure/Repo';
 export * from '@/core/infrastructure/loaders/Loader';
 export * from '@/core/infrastructure/loaders/Manager';
 
+export * from '@/core/infrastructure/cache/Cache';
+
 /**
  * @deprecated
  */
