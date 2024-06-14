@@ -1,5 +1,4 @@
 import { Manager as LoaderManagerContract } from '@/core/domain/loaders/Manager';
-import { Container } from '@/core/infrastructure/Container';
 
 export class LoaderManager implements LoaderManagerContract {
   protected loaders: any[] = [
@@ -13,7 +12,7 @@ export class LoaderManager implements LoaderManagerContract {
   load(): void {
     this.loaders.forEach((loader: any) => {
       const instance = this.resolve(loader);
-      instance.setContainer(Container).load();
+      instance.load();
     });
   }
 

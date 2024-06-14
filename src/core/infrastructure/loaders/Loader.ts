@@ -1,13 +1,11 @@
 import { Loader as LoaderContract } from "@/core/domain/loaders/Loader";
-import { ContainerInstance } from '@/core/infrastructure/Container';
+import { Container } from '@/core/infrastructure/Container';
 
 export abstract class Loader implements LoaderContract {
-  protected container: ContainerInstance;
+  protected container: typeof Container;
 
-  protected setContainer(container: ContainerInstance): Loader {
-    this.container = container;
-
-    return this;
+  constructor() {
+    this.container = Container;
   }
 
   load(): void {
