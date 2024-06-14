@@ -10,8 +10,6 @@ export * from '@/core/domain/auth/Guard';
 export * from '@/core/domain/auth/TokenGuard';
 export * from '@/core/domain/auth/UserProvider';
 
-export * from '@/core/domain/cache/Cache';
-
 export * from '@/core/infrastructure/http/App';
 
 export * from '@/core/infrastructure/events/Event';
@@ -28,6 +26,9 @@ export * from '@/core/infrastructure/Controller';
 export * from '@/core/infrastructure/Mapper';
 export * from '@/core/infrastructure/Repo';
 
+/**
+ * @deprecated
+ */
 export * from '@/core/infrastructure/cache/InMemoryCache';
 export * from '@/core/infrastructure/cache/RedisCache';
 
