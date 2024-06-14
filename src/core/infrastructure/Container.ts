@@ -1,1 +1,1 @@
-export { Container, Service, Inject } from 'typedi';
+export { Container, ContainerInstance, Service, Inject } from 'typedi';
