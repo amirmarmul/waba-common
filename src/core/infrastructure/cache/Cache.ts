@@ -63,8 +63,8 @@ export class Cache {
     return { driver: 'null' };
   }
 
-  protected getPrefix(config: CacheConfig) {
-    return config.prefix;
+  protected getPrefix() {
+    return this.config.prefix;
   }
 
   protected nullDriver(config: CacheConfig) {
@@ -77,7 +77,7 @@ export class Cache {
 
   protected redisDriver(config: CacheConfig) {
     const redis = Container.get<Redis>(Redis);
-    const prefix = this.getPrefix(config);
+    const prefix = this.getPrefix();
 
     return new Repo(
       new RedisStore(redis, prefix)
