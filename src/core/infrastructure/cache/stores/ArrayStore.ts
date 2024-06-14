@@ -1,26 +1,17 @@
-import { Cache as CacheContract } from '@/core/domain/cache/Cache';
-
-const DEFAULT_TTL_IN_SECONDS = 30; // seconds
+import { Store } from '@/core/domain/cache/Store';
 
 type CacheRecord<T> = {
   data: T;
-  expire: number;
+  expire?: number;
 }
 
-/**
- * @deprecated
- */
-export class InMemoryCache implements CacheContract {
-  protected readonly TTL: number;
+export class ArrayStore implements Store {
   protected readonly store = new Map<string, CacheRecord<any>>();
   protected readonly timeoutRefs = new Map<string, NodeJS.Timeout>();
 
-  constructor() {
-    this.TTL = DEFAULT_TTL_IN_SECONDS;
-  }
-
   async get<T>(key: string): Promise<T | null> {
     const now = Date.now();
+
     const record: CacheRecord<T> | undefined = this.store.get(key);
 
     const expiration = record?.expire ?? Infinity;
@@ -32,35 +23,46 @@ export class InMemoryCache implements CacheContract {
     return record.data;
   }
 
-  async set<T>(key: string, data: T, ttl: number = this.TTL): Promise<void> {
-    if (ttl === 0) {
-      return;
-    }
-
-    const record: CacheRecord<T> = { data, expire: ttl * 1000 + Date.now() };
+  async put(key: string, value: unknown, ttl: number): Promise<boolean> {
+    const record: CacheRecord<any> = { data: value, expire: ttl * 1000 + Date.now() }
 
     const oldRecord = this.store.get(key);
 
     if (oldRecord) {
-      clearTimeout(this.timeoutRefs.get(key));
-      this.timeoutRefs.delete(key);
+      await this.forget(key);
     }
 
     const ref = setTimeout(async () => {
-      await this.invalidate(key);
+      await this.forget(key);
     }, ttl * 1000);
 
     ref.unref();
 
     this.timeoutRefs.set(key, ref);
     this.store.set(key, record);
+
+    return true;
   }
 
-  async invalidate(key: string): Promise<void> {
+  async forever(key: string, value: unknown): Promise<boolean> {
+    const record: CacheRecord<any> = { data: value }
+
+    const oldRecord = this.store.get(key);
+
+    if (oldRecord) {
+      await this.forget(key);
+    }
+
+    this.store.set(key, record);
+
+    return true;
+  }
+
+  async forget(key: string): Promise<boolean> {
     let keys = [key];
 
-    if (key.includes("*")) {
-      const regExp = new RegExp(key.replace("*", ".*"));
+    if (key.includes('*')) {
+      const regExp = new RegExp(key.replace('*', '.*'));
       keys = Array.from(this.store.keys()).filter((k) => k.match(regExp));
     }
 
@@ -72,12 +74,20 @@ export class InMemoryCache implements CacheContract {
       }
       this.store.delete(key);
     });
+
+    return true;
   }
 
-  async clear(): Promise<void> {
+  async flush(): Promise<boolean> {
     this.timeoutRefs.forEach((ref) => clearTimeout(ref));
     this.timeoutRefs.clear();
 
     this.store.clear();
+
+    return true;
+  }
+
+  getPrefix(): string {
+    return '';
   }
 }

@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 export interface Cache {
   get<T>(key: string): Promise<T | null>;
   set(key: string, data: unknown, ttl?: number): Promise<void>;

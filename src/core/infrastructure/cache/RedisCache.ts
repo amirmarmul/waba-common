@@ -5,6 +5,9 @@ const DEFAULT_NAMESPACE = "waba";
 const DEFAULT_CACHE_TIME_IN_SECONDS = 30;
 const EXPIRY_MODE = "EX";
 
+/**
+ * @deprecated
+ */
 export class RedisCache implements CacheContract {
   protected readonly TTL: number;
   protected readonly redis: Redis;
