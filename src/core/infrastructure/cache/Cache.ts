@@ -95,11 +95,11 @@ export class Cache {
     return await this.strategy.missing(key);
   }
 
-  async get<T>(key: string, _default: any): Promise<T | null> {
+  async get<T>(key: string, _default?: any): Promise<T | null> {
     return await this.strategy.get(key, _default);
   }
 
-  async pull<T>(key: string, _default: any): Promise<T | null> {
+  async pull<T>(key: string, _default?: any): Promise<T | null> {
     return await this.strategy.pull(key, _default);
   }
 
