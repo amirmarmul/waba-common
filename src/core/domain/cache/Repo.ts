@@ -12,11 +12,11 @@ export interface Repo {
   /**
    * Retrieve an item from the cache by key.
    */
-  get<T>(key: string): Promise<T | null>;
+  get<T>(key: string, _default?: unknown): Promise<T | null>;
   /**
    * Retrieve an item from the cache and delete it.
    */
-  pull<T>(key: string, _default: unknown): Promise<T | null>;
+  pull<T>(key: string, _default?: unknown): Promise<T | null>;
   /**
    * Store an item in the cache.
    */

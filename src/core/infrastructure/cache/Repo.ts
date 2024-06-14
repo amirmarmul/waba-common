@@ -18,13 +18,13 @@ export class Repo implements Cache {
     return ! await this.has(key);
   }
 
-  async get<T>(key: string): Promise<T | null> {
+  async get<T>(key: string, _default?: any): Promise<T | null> {
     const value = await this.store.get(this.itemKey(key));
 
-    return value as T;
+    return value || await this.value(_default);
   }
 
-  async pull<T>(key: string, _default: any): Promise<T | null> {
+  async pull<T>(key: string, _default?: any): Promise<T | null> {
     const value = await this.get(key);
 
     if (value) {
@@ -132,7 +132,7 @@ export class Repo implements Cache {
     return ttl;
   }
 
-  private async value(value: any): Promise<any> {
+  private async value(value?: any): Promise<any> {
     return typeof value === 'function' ? await value() : value;
   }
 }
