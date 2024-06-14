@@ -5,10 +5,20 @@ import { ArrayStore } from '@/core/infrastructure/cache/stores/ArrayStore';
 import { RedisStore } from '@/core/infrastructure/cache/stores/RedisStore';
 import { Redis } from 'ioredis';
 
+type StoreConfig = {
+  driver: 'null' | 'array' | 'file' | 'redis';
+}
+
+type FlexibleStoreConfig = StoreConfig & {
+  [key: string]: any
+};
+
 export type CacheConfig = {
-  store: string,
-  stores: { [key: string]: any },
-  prefix: string,
+  store: string;
+  stores: {
+    [key: string]: FlexibleStoreConfig;
+  };
+  prefix: string;
 }
 
 export class Cache {
