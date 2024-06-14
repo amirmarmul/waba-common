@@ -126,4 +126,8 @@ export class Cache {
   async forget(key: string): Promise<boolean> {
     return await this.strategy.forget(key);
   }
+
+  async flush(): Promise<boolean> {
+    return await this.strategy.flush();
+  }
 }

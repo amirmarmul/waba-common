@@ -42,6 +42,10 @@ export interface Repo {
    */
   forget(key: string): Promise<boolean>;
   /**
+   * Remove all items from the cache.
+   */
+  flush(): Promise<boolean>;
+  /**
    * Get the cache store implementation.
    */
   getStore(): Store;

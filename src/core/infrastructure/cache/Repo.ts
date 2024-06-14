@@ -104,6 +104,12 @@ export class Repo implements Cache {
     return result;
   }
 
+  async flush(): Promise<boolean> {
+    const result = await this.store.flush();
+
+    return result;
+  }
+
   getDefaultCacheTime(): number {
     return this.ttl;
   }
