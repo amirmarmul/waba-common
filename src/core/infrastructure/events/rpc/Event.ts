@@ -12,7 +12,7 @@ export abstract class Event<T> extends BaseEvent<T> {
     channel.assertQueue(this.exclusiveQueue, { exclusive: true });
   }
 
-  public publish<Response>(): Promise<Response> {
+  public publish<Response>(options = {}): Promise<Response> {
     logger.info('Publish message %s', this.constructor.name);
     return new Promise(resolve => {
       const correlationId = this.correlationId;
@@ -29,12 +29,12 @@ export abstract class Event<T> extends BaseEvent<T> {
 
       this.channel.consume(this.exclusiveQueue, handleMessage, { noAck: true });
 
-      this.channel.sendToQueue(this.queue, this.payload, {
+      this.channel.sendToQueue(this.queue, this.payload, Object.assign({
         correlationId: correlationId,
         replyTo: this.exclusiveQueue,
         deliveryMode: 2,
         persistent: true,
-      });
+      }, options));
     });
   }
 
@@ -73,7 +73,7 @@ export abstract class Event<T> extends BaseEvent<T> {
         }).catch((err) => {
           console.error('Failed to delete queue: ', err.message);
         });
-        
+
         await this.channel.close().catch((reason) => {
           console.error('Failed to close rpc channel: ', reason);
         });

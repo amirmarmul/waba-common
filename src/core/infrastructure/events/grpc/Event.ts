@@ -32,7 +32,7 @@ export abstract class Event<T> {
     }
   }
 
-  publish<Response>(): Promise<Response> {
+  publish<Response>(options = {}): Promise<Response> {
     logger.info('Publish message %s', this.constructor.name);
     return new Promise((resolve, reject) => {
       const handleMessage = (err: any, response: any) => {

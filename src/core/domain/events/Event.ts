@@ -1,4 +1,8 @@
+export interface EventOptions {
+  [key: string]: unknown;
+}
+
 export interface Event {
   init(): Event;
-  publish(): any;
+  publish(options?: EventOptions): any;
 }

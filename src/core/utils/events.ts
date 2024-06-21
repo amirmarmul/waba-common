@@ -1,5 +1,5 @@
-import { Event } from '@/core/domain/events/Event';
+import { Event, EventOptions } from '@/core/domain/events/Event';
 
-export async function dispatcher(publisher: Event): Promise<any> {
-  return await publisher.init().publish();
+export async function dispatcher(publisher: Event, options?: EventOptions): Promise<any> {
+  return await publisher.init().publish(options);
 }

@@ -2,11 +2,13 @@ import { logger } from '@/core';
 import { Event as EventContract } from '@/core/domain/events/Event';
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
+import { PublishOptions } from 'amqp-connection-manager/dist/types/ChannelWrapper';
 export { Channel, ChannelWrapper };
 
 export abstract class Event<T> implements EventContract {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
+  protected priority: number;
   protected payload: T;
   abstract exchange: string;
   abstract topic: string;
@@ -15,6 +17,7 @@ export abstract class Event<T> implements EventContract {
     this.connection = Connection.getConnection();
 
     this.payload = payload;
+    this.priority = 0;
   }
 
   init() {
@@ -30,12 +33,12 @@ export abstract class Event<T> implements EventContract {
     channel.assertExchange(this.exchange, 'topic', { durable: false });
   }
 
-  public async publish() {
+  public async publish(options = {}) {
     logger.info('Publish message %s', this.constructor.name);
-    const result = await this.channel.publish(this.exchange, this.topic, this.payload, {
+    const result = await this.channel.publish(this.exchange, this.topic, this.payload, Object.assign({
       deliveryMode: 2,
       persistent: true,
-    });
+    }, options));
     await this.close();
     return result;
   }
