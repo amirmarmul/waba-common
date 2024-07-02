@@ -7,7 +7,7 @@ export class Repo implements Cache {
 
   constructor(store: Store) {
     this.store = store;
-    this.ttl = 30;
+    this.ttl = 3600;
   }
 
   async has(key: string): Promise<boolean> {
@@ -46,7 +46,7 @@ export class Repo implements Cache {
     return result;
   }
 
-  async add(key: string, value: any, ttl?: number | undefined): Promise<boolean> {
+  async add(key: string, value: any, ttl: number = this.ttl): Promise<boolean> {
     let seconds = undefined;
 
     if (!ttl) {

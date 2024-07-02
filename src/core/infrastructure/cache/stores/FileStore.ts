@@ -72,18 +72,16 @@ type CacheRecord<T> = {
 
 export class FileStore implements Store {
   protected directory: string;
-  protected ttl: number;
 
   constructor(directory: string) {
     this.directory = nodePath.resolve(directory);
-    this.ttl = 30;
   }
 
   async get<T>(key: string): Promise<T | null> {
     return await this.getPayload<T>(key);
   }
 
-  async put(key: string, value: unknown, ttl: number = this.ttl): Promise<boolean> {
+  async put(key: string, value: unknown, ttl: number): Promise<boolean> {
     const record: CacheRecord<any> = { data: value, expire: ttl * 1000 + Date.now() }
 
     try {
