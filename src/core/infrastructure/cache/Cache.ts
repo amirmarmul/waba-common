@@ -12,7 +12,7 @@ type StoreConfig = {
 }
 
 export type CacheConfig = {
-  store: string;
+  store: 'null' | 'array' | 'file' | 'redis';
   stores: {
     [key: string]: StoreConfig;
   };
