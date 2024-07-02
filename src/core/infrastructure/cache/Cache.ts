@@ -4,19 +4,17 @@ import { NullStore } from '@/core/infrastructure/cache/stores/NullStore';
 import { ArrayStore } from '@/core/infrastructure/cache/stores/ArrayStore';
 import { RedisStore } from '@/core/infrastructure/cache/stores/RedisStore';
 import { Redis } from 'ioredis';
+import { FileStore } from './stores/FileStore';
 
 type StoreConfig = {
   driver: 'null' | 'array' | 'file' | 'redis';
+  [key: string]: any;
 }
-
-type FlexibleStoreConfig = StoreConfig & {
-  [key: string]: any
-};
 
 export type CacheConfig = {
   store: string;
   stores: {
-    [key: string]: FlexibleStoreConfig;
+    [key: string]: StoreConfig;
   };
   prefix: string;
 }
@@ -67,12 +65,20 @@ export class Cache {
     return this.config.prefix;
   }
 
-  protected nullDriver(config: CacheConfig) {
+  protected nullDriver(config: StoreConfig) {
     return new Repo(new NullStore());
   }
 
-  protected arrayDriver(config: CacheConfig) {
+  protected arrayDriver(config: StoreConfig) {
     return new Repo(new ArrayStore());
+  }
+
+  protected fileDriver(config: StoreConfig) {
+    const path = config.path || 'storage/cache/data';
+
+    return new Repo(
+      new FileStore(path)
+    );
   }
 
   protected redisDriver(config: CacheConfig) {
