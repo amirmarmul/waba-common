@@ -22,7 +22,6 @@ export type CacheConfig = {
 }
 
 export class Cache {
-  protected strategy: Repo;
   protected stores: { [key: string]: Repo } = {};
   protected readonly config: CacheConfig;
 
