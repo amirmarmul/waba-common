@@ -91,8 +91,8 @@ export class Cache {
     );
   }
 
-  protected redisDriver(config: CacheConfig) {
-    const redis = Container.get<Redis>(Redis);
+  protected redisDriver(config: StoreConfig) {
+    const redis = new Redis(config.redisUrl);
     const prefix = this.getPrefix();
 
     return new Repo(
