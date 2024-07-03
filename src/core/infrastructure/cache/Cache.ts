@@ -1,21 +1,18 @@
 import Container from 'typedi';
+import { Redis } from 'ioredis';
 import { Repo } from '@/core/infrastructure/cache/Repo';
 import { NullStore } from '@/core/infrastructure/cache/stores/NullStore';
 import { ArrayStore } from '@/core/infrastructure/cache/stores/ArrayStore';
 import { RedisStore } from '@/core/infrastructure/cache/stores/RedisStore';
-import { Redis } from 'ioredis';
-import { FileStore } from './stores/FileStore';
-
-type Driver = 'null' | 'array' | 'file' | 'redis' | string;
-type Store = Driver;
+import { FileStore } from '@/core/infrastructure/cache/stores/FileStore';
 
 type StoreConfig = {
-  driver: Driver;
+  driver: 'null' | 'array' | 'file' | 'redis';
   [key: string]: any;
 }
 
 export type CacheConfig = {
-  store: Store;
+  store: 'null' | 'array' | 'file' | 'redis';
   stores: {
     [key: string]: StoreConfig;
   };
@@ -24,20 +21,25 @@ export type CacheConfig = {
 
 export class Cache {
   protected strategy: Repo;
-  protected strategies: { [key: string]: any } = {};
+  protected stores: { [key: string]: Repo } = {};
   protected readonly config: CacheConfig;
 
   constructor(config: CacheConfig) {
     this.config = config;
-    this.driver(config.store);
   }
 
-  driver(name: Driver): Repo {
-    if (!(name in this.strategies)) {
-      this.strategies[name] = this.resolve(name);
+  driver(driver?: 'null' | 'array' | 'file' | 'redis') {
+    return this.store(driver);
+  }
+
+  protected store(name?: 'null' | 'array' | 'file' | 'redis') {
+    name = name || this.getDefaultDriver();
+
+    if (!(name in this.stores)) {
+      this.stores[name] = this.resolve(name);
     }
 
-    return this.strategy = this.strategies[name];
+    return this.stores[name];
   }
 
   protected resolve(name: string) {
@@ -66,6 +68,10 @@ export class Cache {
 
   protected getPrefix() {
     return this.config.prefix;
+  }
+
+  protected getDefaultDriver() {
+    return this.config.store;
   }
 
   protected nullDriver(config: StoreConfig) {
@@ -97,46 +103,46 @@ export class Cache {
    * CacheContract
    */
   async has(key: string): Promise<boolean> {
-    return await this.strategy.has(key);
+    return await this.store().has(key);
   }
 
   async missing(key: string): Promise<boolean> {
-    return await this.strategy.missing(key);
+    return await this.store().missing(key);
   }
 
   async get<T>(key: string, _default?: any): Promise<T | null> {
-    return await this.strategy.get(key, _default);
+    return await this.store().get(key, _default);
   }
 
   async pull<T>(key: string, _default?: any): Promise<T | null> {
-    return await this.strategy.pull(key, _default);
+    return await this.store().pull(key, _default);
   }
 
   async put(key: string, value: any, ttl?: number): Promise<boolean> {
-    return await this.strategy.put(key, value, ttl);
+    return await this.store().put(key, value, ttl);
   }
 
   async add(key: string, value: any, ttl?: number): Promise<boolean> {
-    return await this.strategy.add(key, value, ttl);
+    return await this.store().add(key, value, ttl);
   }
 
   async forever(key: string, value: any): Promise<boolean> {
-    return await this.strategy.forever(key, value);
+    return await this.store().forever(key, value);
   }
 
   async remember<T>(key: string, callback: Function, ttl?: number): Promise<T> {
-    return await this.strategy.remember(key, callback, ttl);
+    return await this.store().remember(key, callback, ttl);
   }
 
   async rememberForever<T>(key: string, callback: Function): Promise<T> {
-    return await this.strategy.rememberForever(key, callback);
+    return await this.store().rememberForever(key, callback);
   }
 
   async forget(key: string): Promise<boolean> {
-    return await this.strategy.forget(key);
+    return await this.store().forget(key);
   }
 
   async flush(): Promise<boolean> {
-    return await this.strategy.flush();
+    return await this.store().flush();
   }
 }
