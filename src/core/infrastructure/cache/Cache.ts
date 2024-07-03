@@ -6,13 +6,16 @@ import { RedisStore } from '@/core/infrastructure/cache/stores/RedisStore';
 import { Redis } from 'ioredis';
 import { FileStore } from './stores/FileStore';
 
+type Driver = 'null' | 'array' | 'file' | 'redis' | string;
+type Store = Driver;
+
 type StoreConfig = {
-  driver: 'null' | 'array' | 'file' | 'redis';
+  driver: Driver;
   [key: string]: any;
 }
 
 export type CacheConfig = {
-  store: 'null' | 'array' | 'file' | 'redis';
+  store: Store;
   stores: {
     [key: string]: StoreConfig;
   };
@@ -29,7 +32,7 @@ export class Cache {
     this.driver(config.store);
   }
 
-  driver(name: string) {
+  driver(name: Driver): Repo {
     if (!(name in this.strategies)) {
       this.strategies[name] = this.resolve(name);
     }
