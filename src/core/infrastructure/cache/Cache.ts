@@ -6,13 +6,15 @@ import { ArrayStore } from '@/core/infrastructure/cache/stores/ArrayStore';
 import { RedisStore } from '@/core/infrastructure/cache/stores/RedisStore';
 import { FileStore } from '@/core/infrastructure/cache/stores/FileStore';
 
+type CacheDriver = 'null' | 'array' | 'file' | 'redis';
+
 type StoreConfig = {
-  driver: 'null' | 'array' | 'file' | 'redis';
+  driver: CacheDriver;
   [key: string]: any;
 }
 
 export type CacheConfig = {
-  store: 'null' | 'array' | 'file' | 'redis';
+  store: string;
   stores: {
     [key: string]: StoreConfig;
   };
@@ -28,11 +30,11 @@ export class Cache {
     this.config = config;
   }
 
-  driver(driver?: 'null' | 'array' | 'file' | 'redis') {
+  driver(driver?: CacheDriver) {
     return this.store(driver);
   }
 
-  protected store(name?: 'null' | 'array' | 'file' | 'redis') {
+  protected store(name?: string) {
     name = name || this.getDefaultDriver();
 
     if (!(name in this.stores)) {
