@@ -26,9 +26,13 @@ export abstract class Event<T> {
   }
 
   protected setup() {
-    if (!this.connection.get(this.constructor.name)) {
-      const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
-      this.connection.add(service);
+    try {
+      if (!this.connection.get(this.constructor.name)) {
+        const service = new Service(this.constructor.name).add(new Method("Publish", "rpc", 'Event', 'Listener'));
+        this.connection.add(service);
+      }
+    } catch (error: any) {
+      logger.error('Error while connecting the server', { error: error.stack });
     }
   }
 
