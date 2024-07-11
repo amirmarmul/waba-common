@@ -1,4 +1,5 @@
 import { logger, UniqueId, Event as BaseEvent, Channel } from '@/core';
+import { setTimeout } from 'timers/promises';
 
 export abstract class Event<T> extends BaseEvent<T> {
   readonly correlationId: string;
@@ -66,7 +67,7 @@ export abstract class Event<T> extends BaseEvent<T> {
   }
 
   protected async close() {
-    setTimeout(async () => {
+    return await setTimeout(1000, async () => {
       if (this.channel) {
         this.channel.deleteQueue(this.exclusiveQueue).then(() => {
           console.log('The response queue is cleared');
@@ -78,6 +79,6 @@ export abstract class Event<T> extends BaseEvent<T> {
           console.error('Failed to close rpc channel: ', reason);
         });
       }
-    }, 1000);
+    });
   }
 }

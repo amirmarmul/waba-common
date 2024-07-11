@@ -1,4 +1,5 @@
 import { logger } from '@/core';
+import { setTimeout } from 'timers/promises';
 import { Event as EventContract } from '@/core/domain/events/Event';
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
@@ -44,12 +45,12 @@ export abstract class Event<T> implements EventContract {
   }
 
   protected async close() {
-    setTimeout(async () => {
+    return await setTimeout(1000, async () => {
       if (this.channel) {
         await this.channel.close().catch((reason) => {
           console.error('Failed to close channel: ', reason);
         });
       }
-    }, 1000)
+    });
   }
 }
