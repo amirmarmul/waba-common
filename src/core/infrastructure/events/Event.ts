@@ -4,6 +4,7 @@ import { Event as EventContract } from '@/core/domain/events/Event';
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
 import { PublishOptions } from 'amqp-connection-manager/dist/types/ChannelWrapper';
+import { ChannelEvent } from './ChannelEvent';
 export { Channel, ChannelWrapper };
 
 export abstract class Event<T> implements EventContract {
@@ -22,10 +23,8 @@ export abstract class Event<T> implements EventContract {
   }
 
   init() {
-    this.channel = this.connection.createChannel({
-      json: true,
-      setup: (channel: Channel): any => this.setup(channel)
-    });
+    this.channel = ChannelEvent.getChannel();
+    this.channel.addSetup(this.setup);
 
     return this;
   }
@@ -40,17 +39,17 @@ export abstract class Event<T> implements EventContract {
       deliveryMode: 2,
       persistent: true,
     }, options));
-    await this.close();
+    // await this.close();
     return result;
   }
 
   protected async close() {
-    return await setTimeout(1000, async () => {
-      if (this.channel) {
-        await this.channel.close().catch((reason) => {
-          console.error('Failed to close channel: ', reason);
-        });
-      }
-    });
+    // return await setTimeout(1000, async () => {
+    //   if (this.channel) {
+    //     await this.channel.close().catch((reason) => {
+    //       console.error('Failed to close channel: ', reason);
+    //     });
+    //   }
+    // });
   }
 }
