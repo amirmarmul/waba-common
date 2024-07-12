@@ -66,7 +66,7 @@ export abstract class Event<T> extends BaseEvent<T> {
     return JSON.parse(json);
   }
 
-  protected async close() {
+  protected async close(): Promise<any> {
     return await setTimeout(1000, async () => {
       if (this.channel) {
         this.channel.deleteQueue(this.exclusiveQueue).then(() => {
