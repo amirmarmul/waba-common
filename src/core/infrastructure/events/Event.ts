@@ -24,7 +24,7 @@ export abstract class Event<T> implements EventContract {
 
   init() {
     this.channel = ChannelEvent.getChannel();
-    this.channel.addSetup(this.setup);
+    this.channel.addSetup(this.setup.bind(this));
 
     return this;
   }
