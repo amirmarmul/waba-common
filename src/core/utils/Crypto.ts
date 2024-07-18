@@ -9,7 +9,7 @@ import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypt
  * let decoded = JSON.parse(decodedString);
  */
 export class Crypto {
-  static secretKey = 'this-is-secret-key';
+  static secretKey = process.env.SECRET_KEY ?? 'this-is-secret-key';
 
   static encrypt = (text: string): string => {
     const key = createHash('sha256').update(Crypto.secretKey).digest();
