@@ -30,9 +30,7 @@ export abstract class Event<T> implements EventContract {
   }
 
   protected setup(channel: Channel): Promise<any> {
-    return Promise.all([
-      channel.assertExchange(this.exchange, 'topic', { durable: false }),
-    ]);
+    return channel.assertExchange(this.exchange, 'topic', { durable: false });
   }
 
   public async publish(options = {}) {
