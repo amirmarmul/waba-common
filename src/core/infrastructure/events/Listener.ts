@@ -40,7 +40,7 @@ export abstract class Listener<T> implements ListenerContract {
     return this.channel.consume(this.queue, (msg) => {
       const parsedMessage = this.parseMessage(msg);
       logger.info('Receive message %s', this.constructor.name, { parsedMessage });
-      this.onMessage(parsedMessage, () => this.channel.ack(msg), () => this.channel.nack(msg, false, true));
+      this.onMessage(parsedMessage, () => this.channel.ack(msg), () => this.channel.nack(msg));
     });
   }
 
