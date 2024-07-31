@@ -25,11 +25,13 @@ export abstract class Listener<T> implements ListenerContract {
     return this;
   }
 
-  protected setup(channel: Channel): void {
-    channel.assertExchange(this.exchange, 'topic', { durable: false });
-    channel.assertQueue(this.queue);
-    channel.bindQueue(this.queue, this.exchange, this.topic);
-    channel.prefetch(parseInt(process.env.MQ_PREFETCH! ?? '10'));
+  protected setup(channel: Channel): Promise<any> {
+    return Promise.all([
+      channel.assertExchange(this.exchange, 'topic', { durable: false }),
+      channel.assertQueue(this.queue),
+      channel.bindQueue(this.queue, this.exchange, this.topic),
+      channel.prefetch(parseInt(process.env.MQ_PREFETCH! ?? '10')),
+    ]);
   }
 
   abstract onMessage(data: T, ack: Function, nack?: Function): any;
@@ -38,7 +40,7 @@ export abstract class Listener<T> implements ListenerContract {
     return this.channel.consume(this.queue, (msg) => {
       const parsedMessage = this.parseMessage(msg);
       logger.info('Receive message %s', this.constructor.name, { parsedMessage });
-      this.onMessage(parsedMessage, () => this.channel.ack(msg), () => this.channel.nack(msg));
+      this.onMessage(parsedMessage, () => this.channel.ack(msg), () => this.channel.nack(msg, false, true));
     });
   }
 
