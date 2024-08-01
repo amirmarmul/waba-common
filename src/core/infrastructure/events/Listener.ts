@@ -25,13 +25,11 @@ export abstract class Listener<T> implements ListenerContract {
     return this;
   }
 
-  protected setup(channel: Channel): Promise<any> {
-    return Promise.all([
-      channel.assertExchange(this.exchange, 'topic', { durable: false }),
-      channel.assertQueue(this.queue),
-      channel.bindQueue(this.queue, this.exchange, this.topic),
-      channel.prefetch(parseInt(process.env.MQ_PREFETCH! ?? '10')),
-    ]);
+  protected setup(channel: Channel): void {
+    channel.assertExchange(this.exchange, 'topic', { durable: false });
+    channel.assertQueue(this.queue);
+    channel.bindQueue(this.queue, this.exchange, this.topic);
+    channel.prefetch(parseInt(process.env.MQ_PREFETCH! ?? '10'));
   }
 
   abstract onMessage(data: T, ack: Function, nack?: Function): any;

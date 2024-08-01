@@ -9,8 +9,8 @@ export abstract class Event<T> extends BaseEvent<T> {
     this.correlationId = this.uniqueId();
   }
 
-  public setup(channel: Channel): Promise<any> {
-    return channel.assertQueue(this.exclusiveQueue, { exclusive: true });
+  public setup(channel: Channel): void {
+    channel.assertQueue(this.exclusiveQueue, { exclusive: true });
   }
 
   public publish<Response>(options = {}): Promise<Response> {
