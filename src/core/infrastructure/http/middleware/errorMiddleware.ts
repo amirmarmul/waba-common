@@ -7,7 +7,6 @@ export function errorMiddleware(err: Error, req: Request, res: Response, next: N
   logger.error(err.message, { cause: err.cause, stack: err.stack });
 
   if (err instanceof AppError) {
-    logger.error(JSON.stringify({ errorMiddleware: err.serializeErrors() }));
     return sendErrorResponse(res, err.serializeErrors(), err.status);
   }
 
