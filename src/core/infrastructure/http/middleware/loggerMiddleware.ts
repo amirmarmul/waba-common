@@ -2,12 +2,11 @@ import morgan from 'morgan';
 import json from 'morgan-json';
 import { logger } from '@/core/utils/logger';
 
-const format = json(':method :url :status :res[content-length] :response-time', { stringify: false });
-
-export const loggerMiddleware = morgan(format, {
+export const loggerMiddleware = morgan(json(':method :url :status :res[content-length] :response-time'), {
   stream: new class {
     write(message: any) {
-      logger.info('accesslog', [message]);
+      const logMessage = JSON.parse(message);
+      logger.info(logMessage);
     }
   }
 });
