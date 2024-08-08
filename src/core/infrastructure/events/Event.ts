@@ -1,9 +1,7 @@
 import { logger } from '@/core';
-import { setTimeout } from 'timers/promises';
 import { Event as EventContract } from '@/core/domain/events/Event';
-import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
+import { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
-import { PublishOptions } from 'amqp-connection-manager/dist/types/ChannelWrapper';
 import { ChannelEvent } from './ChannelEvent';
 export { Channel, ChannelWrapper };
 
@@ -34,7 +32,7 @@ export abstract class Event<T> implements EventContract {
   }
 
   public async publish(options = {}) {
-    logger.info('Publish message %s', this.constructor.name);
+    logger.debug('Publish message %s', this.constructor.name);
     const result = await this.channel.publish(this.exchange, this.topic, this.payload, Object.assign({
       deliveryMode: 2,
       persistent: true,
@@ -43,13 +41,8 @@ export abstract class Event<T> implements EventContract {
     return result;
   }
 
-  protected async close() {
-    // return await setTimeout(1000, async () => {
-    //   if (this.channel) {
-    //     await this.channel.close().catch((reason) => {
-    //       console.error('Failed to close channel: ', reason);
-    //     });
-    //   }
-    // });
-  }
+  /**
+   * @deprecated
+   */
+  protected async close() {}
 }

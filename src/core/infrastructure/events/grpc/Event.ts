@@ -37,7 +37,7 @@ export abstract class Event<T> {
   }
 
   publish<Response>(options = {}): Promise<Response> {
-    logger.info('Publish message %s', this.constructor.name);
+    logger.debug('Publish message %s', this.constructor.name);
     return new Promise((resolve, reject) => {
       const handleMessage = (err: any, response: any) => {
         if (err) {

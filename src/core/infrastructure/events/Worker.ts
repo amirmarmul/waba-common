@@ -2,6 +2,7 @@ import { Container } from '@/core/infrastructure/Container';
 import { Worker as WorkerContract } from '@/core/domain/events/Worker';
 import { Listener as ListenerContract } from '@/core/domain/events/Listener';
 import { Listener } from './Listener';
+import logger from '@/core/utils/logger';
 
 export class Worker implements WorkerContract {
   protected listeners: ListenerContract[] = [];
@@ -25,7 +26,7 @@ export class Worker implements WorkerContract {
   }
 
   start(): void {
-    console.info('Register listeners %s', this.listeners);
+    logger.info('Register listeners %s', this.listeners);
     for (const listener of this.listeners) {
       listener.init().listen();
     }

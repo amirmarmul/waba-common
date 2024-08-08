@@ -14,7 +14,7 @@ export abstract class Event<T> extends BaseEvent<T> {
   }
 
   public publish<Response>(options = {}): Promise<Response> {
-    logger.info('Publish message %s', this.constructor.name);
+    logger.debug('Publish message %s', this.constructor.name);
     return new Promise(resolve => {
       const correlationId = this.correlationId;
       const handleMessage = async (msg: any) => {
@@ -70,13 +70,13 @@ export abstract class Event<T> extends BaseEvent<T> {
     return await setTimeout(1000, async () => {
       if (this.channel) {
         this.channel.deleteQueue(this.exclusiveQueue).then(() => {
-          console.log('The response queue is cleared');
+          logger.info('The response queue is cleared');
         }).catch((err) => {
-          console.error('Failed to delete queue: ', err.message);
+          logger.error('Failed to delete queue: ', { msg: err.message });
         });
 
         await this.channel.close().catch((reason) => {
-          console.error('Failed to close rpc channel: ', reason);
+          logger.error('Failed to close rpc channel', { reason });
         });
       }
     });
