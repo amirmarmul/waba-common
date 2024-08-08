@@ -7,7 +7,7 @@ const format = json(':method :url :status :res[content-length] :response-time', 
 export const loggerMiddleware = morgan(format, {
   stream: new class {
     write(message: string) {
-      logger.info(message);
+      logger.info('HTTP request', message);
     }
   }
 });
