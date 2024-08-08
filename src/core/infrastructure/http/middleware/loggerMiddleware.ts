@@ -6,7 +6,7 @@ export const loggerMiddleware = morgan(json(':method :url :status :res[content-l
   stream: new class {
     write(message: any) {
       const logMessage = JSON.parse(message);
-      logger.http(logMessage);
+      logger.info(logMessage);
     }
   }
 });
