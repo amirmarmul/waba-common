@@ -5,8 +5,8 @@ import mongoose from 'mongoose';
 import { ConnectionNotFoundError } from '../../../errors/ConnectionNotFoundError';
 import { HealthCheckError } from '../../../errors/HealthCheckError';
 import { promiseTimeout } from '../../../utils/promise';
-import { Service } from '@/core';
 import { TimeoutError } from '../../../errors/TimeoutError';
+import { Service } from '@/core/infrastructure/Container';
 
 export interface MongoosePingCheckOptions {
   /**

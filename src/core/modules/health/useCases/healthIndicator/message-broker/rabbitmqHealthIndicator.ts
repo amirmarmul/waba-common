@@ -1,11 +1,11 @@
 import { HealthIndicatorResult } from '../HealthIndicatorResult';
 import { HealthIndicator } from '../HealthIndicator';
-import { Service } from '@/core';
 import { ConnectionNotFoundError } from '../../../errors/ConnectionNotFoundError';
 import { TimeoutError } from '../../../errors/TimeoutError';
 import { HealthCheckError } from '../../../errors/HealthCheckError';
 import { promiseTimeout } from '../../../utils/promise';
 import { Connection } from '@/core/infrastructure/events/Connection';
+import { Service } from '@/core/infrastructure/Container';
 
 export interface RabbitmqPingCheckOptions {
   /**

@@ -1,4 +1,4 @@
-import { Service } from '@/core';
+import { Service } from '@/core/infrastructure/Container';
 import { HealthIndicatorFunction } from '../healthIndicator/HealthIndicator';
 import { HealthIndicatorResult } from '../healthIndicator/HealthIndicatorResult';
 import { HealthCheckResult, HealthCheckStatus } from './HealthCheckResult';

@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { HealthCheck } from '../healthCheck/HealthCheck';
 import { MongooseHealthIndicator } from '../healthIndicator/database/mongooseHealthIndicator';
 import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbitmqHealthIndicator';
-import { Container, Controller, Service } from '@/index';
+import { Controller } from '@/core/infrastructure/Controller';
+import { Container, Service } from '@/core/infrastructure/Container';
 
 @Service()
 export default class HealthController extends Controller {
