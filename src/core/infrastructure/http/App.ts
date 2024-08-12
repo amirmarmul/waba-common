@@ -10,12 +10,14 @@ import { loggerMiddleware } from '@/core/infrastructure/http/middleware/loggerMi
 import { routeNotFoundMiddleware } from '@/core/infrastructure/http/middleware/routeNotFoundMiddleware';
 import { errorMiddleware } from '@/core/infrastructure/http/middleware/errorMiddleware';
 import { alwaysAcceptJsonMiddleware } from '@/core/infrastructure/http/middleware/alwaysAcceptJsonMiddleware';
+import HealthController from '@/core/modules/health/useCases/health/HealthController';
 
 export class App {
   protected app: express.Application = express();
 
-  constructor(controllers: any[]) {
+  constructor(controllers: any[], options: any = {}) {
     this.registerMiddleware();
+    this.registerHealthHandlers(options.health);
     this.registerControllers(controllers);
     this.registerErrorHandlers();
   }
@@ -50,6 +52,12 @@ export class App {
       return klass;
     }
     return Container.get<Controller>(klass);
+  }
+
+  protected registerHealthHandlers(health: any) {
+    Container.set('health', health);
+    const instance = this.resolve(HealthController);
+    this.app.use('/', instance.router);
   }
 
   protected registerErrorHandlers() {
