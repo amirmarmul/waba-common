@@ -11,6 +11,7 @@ import { routeNotFoundMiddleware } from '@/core/infrastructure/http/middleware/r
 import { errorMiddleware } from '@/core/infrastructure/http/middleware/errorMiddleware';
 import { alwaysAcceptJsonMiddleware } from '@/core/infrastructure/http/middleware/alwaysAcceptJsonMiddleware';
 import HealthController from '@/core/modules/health/useCases/health/HealthController';
+import DetailController from '@/core/modules/service/useCases/detail/DetailController';
 
 export class App {
   protected app: express.Application = express();
@@ -18,6 +19,7 @@ export class App {
   constructor(controllers: any[], options: any = {}) {
     this.registerMiddleware();
     this.registerHealthHandlers(options.health);
+    this.registerDetailControllers();
     this.registerControllers(controllers);
     this.registerErrorHandlers();
   }
@@ -57,6 +59,11 @@ export class App {
   protected registerHealthHandlers(health: any) {
     Container.set('health', health);
     const instance = this.resolve(HealthController);
+    this.app.use('/', instance.router);
+  }
+
+  protected registerDetailControllers() {
+    const instance = this.resolve(DetailController);
     this.app.use('/', instance.router);
   }
 
