@@ -4,6 +4,7 @@ import { MongooseHealthIndicator } from '../healthIndicator/database/mongooseHea
 import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbitmqHealthIndicator';
 import { Controller } from '@/core/infrastructure/Controller';
 import { Container, Service } from '@/core/infrastructure/Container';
+import { SequelizeHealthIndicator } from '../healthIndicator/database/sequelizeHealthIndicator';
 
 @Service()
 export default class HealthController extends Controller {
@@ -11,6 +12,7 @@ export default class HealthController extends Controller {
     private readonly health: HealthCheck,
     private readonly mongoose: MongooseHealthIndicator,
     private readonly rabbitmq: RabbitmqHealthIndicator,
+    private readonly sequelize: SequelizeHealthIndicator,
   ) {
     super();
   }
@@ -36,6 +38,10 @@ export default class HealthController extends Controller {
 
     if (health?.mongo) {
       services.push(async () => this.mongoose.pingCheck('mongo'));
+    }
+
+    if (health?.mysql) {
+      services.push(async () => this.sequelize.pingCheck('mysql'));
     }
 
     return services;
