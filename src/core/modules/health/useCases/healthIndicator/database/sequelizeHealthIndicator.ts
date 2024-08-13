@@ -1,13 +1,14 @@
+
 import { HealthIndicatorResult } from '../HealthIndicatorResult';
 import { HealthIndicator } from '../HealthIndicator';
 import { ConnectionNotFoundError } from '../../../errors/ConnectionNotFoundError';
-import { TimeoutError } from '../../../errors/TimeoutError';
 import { HealthCheckError } from '../../../errors/HealthCheckError';
 import { promiseTimeout } from '../../../utils/promise';
-import { Connection } from '@/core/infrastructure/events/Connection';
-import { Service } from '@/core/infrastructure/Container';
+import { TimeoutError } from '../../../errors/TimeoutError';
+import { Container, Service } from '@/core/infrastructure/Container';
+import { Sequelize } from 'sequelize';
 
-export interface RabbitmqPingCheckOptions {
+export interface SequelizePingCheckOptions {
   /**
    * The amount of time the check should require in ms
    */
@@ -15,17 +16,17 @@ export interface RabbitmqPingCheckOptions {
 }
 
 @Service()
-export class RabbitmqHealthIndicator extends HealthIndicator {
+export class SequelizeHealthIndicator extends HealthIndicator {
   /**
-   * Checks if the RabbitMQ responds in (default) 1000ms and
+   * Checks if the MongoDB responds in (default) 1000ms and
    * returns a result object corresponding to the result
    * 
    * @example
-   * rabbitmqHealthIndicator.pingCheck('rabbitmq', { timeout: 1000 });
+   * mongooseHealthIndicator.pingCheck('mongodb', { timeout: 1000 });
    */
   async pingCheck(
     key: string,
-    options?: RabbitmqPingCheckOptions
+    options?: SequelizePingCheckOptions
   ): Promise<HealthIndicatorResult> {
     let isHealthy = false;
 
@@ -37,7 +38,7 @@ export class RabbitmqHealthIndicator extends HealthIndicator {
     }
 
     try {
-      await this.pingMQ(connection, timeout);
+      await this.pingDB(connection, timeout);
       isHealthy = true;
     } catch (err) {
       if (err instanceof TimeoutError) {
@@ -52,14 +53,16 @@ export class RabbitmqHealthIndicator extends HealthIndicator {
     }
   }
 
-  private async pingMQ(connection: any, timeout: number) {
-    const promise = connection.isConnected() ? Promise.resolve() : Promise.reject();
+  private async pingDB(connection: any, timeout: number) {
+    const promise = connection.getConnection({ type: 'read' }) ? Promise.resolve() : Promise.reject();
     return await promiseTimeout(timeout, promise);
   }
 
   private getContextConnection(): any | null {
     try {
-      return Connection.getConnection();
+      const MySQLDB = Container.get<string>('MYSQL_DB');
+      const sequelize = new Sequelize(MySQLDB, { dialect: 'mysql' });
+      return sequelize.connectionManager;
     } catch (error) {
       return null;
     }
