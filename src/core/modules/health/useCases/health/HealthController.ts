@@ -1,12 +1,12 @@
+import { Container, Service } from '@/core/infrastructure/Container';
+import { Controller } from '@/core/infrastructure/Controller';
+import logger from '@/core/utils/logger';
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { HealthCheck } from '../healthCheck/HealthCheck';
 import { MongooseHealthIndicator } from '../healthIndicator/database/mongooseHealthIndicator';
-import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbitmqHealthIndicator';
-import { Controller } from '@/core/infrastructure/Controller';
-import { Container, Service } from '@/core/infrastructure/Container';
 import { SequelizeHealthIndicator } from '../healthIndicator/database/sequelizeHealthIndicator';
-import mongoose from 'mongoose';
-import logger from '@/core/utils/logger';
+import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbitmqHealthIndicator';
 
 @Service()
 export default class HealthController extends Controller {
@@ -35,23 +35,29 @@ export default class HealthController extends Controller {
     const health = Container.get<any>('health');
 
     if (health?.rmq) {
-      services.push(async () => this.rabbitmq.pingCheck('rmq'));
+      services.push(this.rmqPingCheck());
     }
 
     if (health?.mongo) {
-      logger.info({ mongooseConnLength: mongoose.connections.length });
-      mongoose.connections.forEach((connection: any) => {
-        // if (!connection?._connectionString) return;
-        const dbName = connection?.client?.s?.options?.dbName;
-        logger.info({ dbName, connection });
-        services.push(async () => this.mongoose.pingCheck('mongo.' + dbName, { connection }));
-      });
+      services.push(this.mongoPingCheck());
     }
 
     if (health?.mysql) {
-      services.push(async () => this.sequelize.pingCheck('mysql'));
+      services.push(this.sequelizePingCheck());
     }
 
     return services;
+  }
+
+  protected rmqPingCheck() {
+    return async () => this.rabbitmq.pingCheck('rmq');
+  }
+
+  protected mongoPingCheck() {
+    return async () => this.mongoose.pingCheck('mongo');
+  }
+
+  protected sequelizePingCheck() {
+    return async () => this.sequelize.pingCheck('mysql');
   }
 }
