@@ -6,6 +6,7 @@ import { Controller } from '@/core/infrastructure/Controller';
 import { Container, Service } from '@/core/infrastructure/Container';
 import { SequelizeHealthIndicator } from '../healthIndicator/database/sequelizeHealthIndicator';
 import mongoose from 'mongoose';
+import logger from '@/core/utils/logger';
 
 @Service()
 export default class HealthController extends Controller {
@@ -38,9 +39,11 @@ export default class HealthController extends Controller {
     }
 
     if (health?.mongo) {
+      logger.info({ mongooseConnLength: mongoose.connections.length });
       mongoose.connections.forEach((connection: any) => {
-        if (!connection?._connectionString) return;
+        // if (!connection?._connectionString) return;
         const dbName = connection?.client?.s?.options?.dbName;
+        logger.info({ dbName, connection });
         services.push(async () => this.mongoose.pingCheck('mongo.' + dbName, { connection }));
       });
     }
