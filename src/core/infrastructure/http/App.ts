@@ -15,12 +15,13 @@ import DetailController from '@/core/modules/service/useCases/detail/DetailContr
 
 export class App {
   protected app: express.Application = express();
+  protected controllers: any[];
 
   constructor(controllers: any[], options: any = {}) {
     this.registerMiddleware();
     this.registerHealthHandlers(options.health);
     this.registerDetailControllers();
-    this.registerControllers(controllers);
+    this.registerControllers([...this.controllers, ...controllers]);
     this.registerErrorHandlers();
   }
 
@@ -58,13 +59,11 @@ export class App {
 
   protected registerHealthHandlers(health: any) {
     Container.set('health', health);
-    const instance = Container.get<Controller>('HealthController');
-    this.app.use('/', instance.router);
+    this.controllers.push(HealthController);
   }
 
   protected registerDetailControllers() {
-    const instance = this.resolve(DetailController);
-    this.app.use('/', instance.router);
+    this.controllers.push(DetailController);
   }
 
   protected registerErrorHandlers() {
