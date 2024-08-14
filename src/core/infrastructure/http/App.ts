@@ -58,7 +58,7 @@ export class App {
 
   protected registerHealthHandlers(health: any) {
     Container.set('health', health);
-    const instance = this.resolve(HealthController);
+    const instance = Container.get<Controller>('HealthController');
     this.app.use('/', instance.router);
   }
 
