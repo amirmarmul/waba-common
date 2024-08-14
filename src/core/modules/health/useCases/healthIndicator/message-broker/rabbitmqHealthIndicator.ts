@@ -8,6 +8,7 @@ import { Connection } from '@/core/infrastructure/events/Connection';
 import { Service } from '@/core/infrastructure/Container';
 
 export interface RabbitmqPingCheckOptions {
+  connection?: any;
   /**
    * The amount of time the check should require in ms
    */
@@ -29,7 +30,7 @@ export class RabbitmqHealthIndicator extends HealthIndicator {
   ): Promise<HealthIndicatorResult> {
     let isHealthy = false;
 
-    const connection = this.getContextConnection();
+    const connection = options?.connection || this.getContextConnection();
     const timeout = options?.timeout || 1000;
 
     if (!connection) {

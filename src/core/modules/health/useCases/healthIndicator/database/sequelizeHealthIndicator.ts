@@ -9,6 +9,7 @@ import { Container, Service } from '@/core/infrastructure/Container';
 import { Sequelize } from 'sequelize';
 
 export interface SequelizePingCheckOptions {
+  connection?: any;
   /**
    * The amount of time the check should require in ms
    */
@@ -30,7 +31,7 @@ export class SequelizeHealthIndicator extends HealthIndicator {
   ): Promise<HealthIndicatorResult> {
     let isHealthy = false;
 
-    const connection = this.getContextConnection();
+    const connection = options?.connection || this.getContextConnection();
     const timeout = options?.timeout || 1000;
 
     if (!connection) {

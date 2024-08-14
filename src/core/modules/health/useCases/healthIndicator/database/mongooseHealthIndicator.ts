@@ -9,6 +9,7 @@ import { TimeoutError } from '../../../errors/TimeoutError';
 import { Service } from '@/core/infrastructure/Container';
 
 export interface MongoosePingCheckOptions {
+  connection?: any;
   /**
    * The amount of time the check should require in ms
    */
@@ -30,7 +31,7 @@ export class MongooseHealthIndicator extends HealthIndicator {
   ): Promise<HealthIndicatorResult> {
     let isHealthy = false;
 
-    const connection = this.getContextConnection();
+    const connection = options?.connection || this.getContextConnection();
     const timeout = options?.timeout || 1000;
 
     if (!connection) {

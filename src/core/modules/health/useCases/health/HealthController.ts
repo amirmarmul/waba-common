@@ -5,6 +5,7 @@ import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbi
 import { Controller } from '@/core/infrastructure/Controller';
 import { Container, Service } from '@/core/infrastructure/Container';
 import { SequelizeHealthIndicator } from '../healthIndicator/database/sequelizeHealthIndicator';
+import mongoose from 'mongoose';
 
 @Service()
 export default class HealthController extends Controller {
@@ -37,7 +38,11 @@ export default class HealthController extends Controller {
     }
 
     if (health?.mongo) {
-      services.push(async () => this.mongoose.pingCheck('mongo'));
+      mongoose.connections.forEach((connection: any) => {
+        if (!connection?._connectionString) return;
+        const dbName = connection?.client?.s?.options?.dbName;
+        services.push(async () => this.mongoose.pingCheck('mongo.' + dbName, { connection }));
+      });
     }
 
     if (health?.mysql) {
