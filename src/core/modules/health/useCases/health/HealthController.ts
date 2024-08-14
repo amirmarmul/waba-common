@@ -1,20 +1,19 @@
 import { Container, Service } from '@/core/infrastructure/Container';
 import { Controller } from '@/core/infrastructure/Controller';
-import logger from '@/core/utils/logger';
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import { HealthCheck } from '../healthCheck/HealthCheck';
 import { MongooseHealthIndicator } from '../healthIndicator/database/mongooseHealthIndicator';
 import { SequelizeHealthIndicator } from '../healthIndicator/database/sequelizeHealthIndicator';
 import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbitmqHealthIndicator';
+import { HealthIndicatorFunction } from '../healthIndicator/HealthIndicator';
 
 @Service()
 export default class HealthController extends Controller {
   constructor(
     private readonly health: HealthCheck,
-    private readonly mongoose: MongooseHealthIndicator,
-    private readonly rabbitmq: RabbitmqHealthIndicator,
-    private readonly sequelize: SequelizeHealthIndicator,
+    protected readonly mongoose: MongooseHealthIndicator,
+    protected readonly rabbitmq: RabbitmqHealthIndicator,
+    protected readonly sequelize: SequelizeHealthIndicator,
   ) {
     super();
   }
@@ -30,34 +29,34 @@ export default class HealthController extends Controller {
     return this.ok(res, data);
   }
 
-  protected getHealthServices() {
+  protected getHealthServices(): HealthIndicatorFunction[] {
     const services = [];
     const health = Container.get<any>('health');
 
     if (health?.rmq) {
-      services.push(this.rmqPingCheck());
+      services.push(...this.rmqPingCheck());
     }
 
     if (health?.mongo) {
-      services.push(this.mongoPingCheck());
+      services.push(...this.mongoPingCheck());
     }
 
     if (health?.mysql) {
-      services.push(this.sequelizePingCheck());
+      services.push(...this.sequelizePingCheck());
     }
 
     return services;
   }
 
-  protected rmqPingCheck() {
-    return async () => this.rabbitmq.pingCheck('rmq');
+  protected rmqPingCheck(): HealthIndicatorFunction[] {
+    return [async () => this.rabbitmq.pingCheck('rmq')];
   }
 
-  protected mongoPingCheck() {
-    return async () => this.mongoose.pingCheck('mongo');
+  protected mongoPingCheck(): HealthIndicatorFunction[] {
+    return [async () => this.mongoose.pingCheck('mongo')];
   }
 
-  protected sequelizePingCheck() {
-    return async () => this.sequelize.pingCheck('mysql');
+  protected sequelizePingCheck(): HealthIndicatorFunction[] {
+    return [async () => this.sequelize.pingCheck('mysql')];
   }
 }
