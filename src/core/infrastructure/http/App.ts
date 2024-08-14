@@ -15,7 +15,7 @@ import DetailController from '@/core/modules/service/useCases/detail/DetailContr
 
 export class App {
   protected app: express.Application = express();
-  protected controllers: any[];
+  protected controllers: any[] = [];
 
   constructor(controllers: any[], options: any = {}) {
     this.registerMiddleware();
