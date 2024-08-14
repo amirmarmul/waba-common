@@ -59,7 +59,12 @@ export class App {
 
   protected registerHealthHandlers(health: any) {
     Container.set('health', health);
-    this.controllers.push(HealthController);
+    if (!Container.has('HealthController')) {
+      this.controllers.push(HealthController);
+      return;
+    }
+    const healthController = Container.get('HealthController');
+    this.controllers.push(healthController);
   }
 
   protected registerDetailControllers() {
