@@ -50,7 +50,9 @@ export class MongooseHealthIndicator extends HealthIndicator {
     if (isHealthy) {
       return this.getStatus(key, isHealthy);
     } else {
-      throw new HealthCheckError(`${key} is not available`)
+      throw this.getStatus(key, isHealthy, {
+        error: new HealthCheckError(`${key} is not available`).message
+      });
     }
   }
 

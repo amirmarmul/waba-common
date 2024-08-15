@@ -22,7 +22,7 @@ export class HealthCheck {
     }
 
     if (result.status === 'error') {
-      console.log(result.details);
+      throw result;
     }
 
     throw new HealthCheckError('Service Unavailable');

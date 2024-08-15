@@ -6,6 +6,7 @@ import { MongooseHealthIndicator } from '../healthIndicator/database/mongooseHea
 import { SequelizeHealthIndicator } from '../healthIndicator/database/sequelizeHealthIndicator';
 import { RabbitmqHealthIndicator } from '../healthIndicator/message-broker/rabbitmqHealthIndicator';
 import { HealthIndicatorFunction } from '../healthIndicator/HealthIndicator';
+import { sendSuccessResponse } from '@/core/utils/response';
 
 @Service()
 export default class HealthController extends Controller {
@@ -23,10 +24,13 @@ export default class HealthController extends Controller {
   }
 
   async show(req: Request, res: Response) {
-    const services = this.getHealthServices();
-    const data = await this.health.check(services);
-
-    return this.ok(res, data);
+    try {
+      const services = this.getHealthServices();
+      const data = await this.health.check(services);
+      return this.ok(res, data);
+    } catch (error: any) {
+      return sendSuccessResponse(res, error, 500);
+    }
   }
 
   protected getHealthServices(): HealthIndicatorFunction[] {

@@ -28,7 +28,7 @@ export class HealthCheckExecutor {
         results.push(res.value);
       } else {
         const error = res.reason;
-        errors.push({ error });
+        errors.push(error);
       }
     });
 
