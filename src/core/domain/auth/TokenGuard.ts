@@ -48,7 +48,7 @@ export class TokenGuard implements Guard {
   }
 
   async setUser(user: Authenticable) {
-    this._user = user;
+    // this._user = user;
   }
 
   async setRequest(req: any) {
@@ -67,7 +67,8 @@ export class TokenGuard implements Guard {
       user = await this._provider.getByToken(token);
     }
 
-    return this._user = user!;
+    return user;
+    // return this._user = user!;
   }
 
   private getTokenFromRequest() {
