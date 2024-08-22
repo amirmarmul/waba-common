@@ -56,9 +56,9 @@ export class TokenGuard implements Guard {
   }
 
   async user() {
-    if (this._user) {
-      return this._user;
-    }
+    // if (this._user) {
+    //   return this._user;
+    // }
 
     let user = null;
     let token = this.getTokenFromRequest();
