@@ -1,6 +1,9 @@
 import TokenGuard from './TokenGuard';
 import UserProvider from './UserProvider';
 
+/**
+ * @deprecated
+ */
 export class Auth {
   private static _instance: Auth;
   private _provider: UserProvider;
