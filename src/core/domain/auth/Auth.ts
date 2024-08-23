@@ -11,9 +11,9 @@ export class Auth {
   }
 
   static getInstance() {
-    // if (!this._instance) {
-    this._instance = new Auth();
-    // }
+    if (!this._instance) {
+      this._instance = new Auth();
+    }
 
     return this._instance;
   }
