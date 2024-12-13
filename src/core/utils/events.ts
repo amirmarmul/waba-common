@@ -1,5 +1,14 @@
-import { Event, EventOptions } from '@/core/domain/events/Event';
+import { Event, EventOptions } from "@/core/domain/events/Event";
 
-export async function dispatcher(publisher: Event, options?: EventOptions): Promise<any> {
+export async function dispatcher(
+  publisher: Event,
+  options?: EventOptions
+): Promise<any> {
   return await publisher.init().publish(options);
+}
+export async function dispatcherWithoutPersistence(
+  publisher: Event,
+  options?: EventOptions
+): Promise<any> {
+  return await publisher.init().publishWithoutPersistence(options);
 }
