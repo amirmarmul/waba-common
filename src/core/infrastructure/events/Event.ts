@@ -49,7 +49,6 @@ export abstract class Event<T> implements EventContract {
         options
       )
     );
-    // await this.close();
     return result;
   }
 
@@ -67,12 +66,6 @@ export abstract class Event<T> implements EventContract {
         options
       )
     );
-    // await this.close();
     return result;
   }
-
-  /**
-   * @deprecated
-   */
-  protected async close() {}
 }
