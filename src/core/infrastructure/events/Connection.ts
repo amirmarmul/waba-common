@@ -9,7 +9,7 @@ export class Connection {
   private constructor() {
     Connection.connection = amqp.connect([process.env.APP_MQ!]);
     Connection.connection.on('error', (err) => {
-      logger.error('AMQP connection error:', err.message);
+      logger.error('AMQP connection error:', { msg: err.message, stack: err.stack });
     });
   }
 
