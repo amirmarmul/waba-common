@@ -2,12 +2,11 @@ import { ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
 import logger from '@/core/utils/logger';
 
-type ChannelType = 'publisher' | 'listener' | 'default';
+type ChannelType = 'publisher' | 'default';
 
 export class ChannelEvent {
   private static channels: Record<ChannelType, ChannelWrapper | null> = {
     default: null,
-    listener: null,
     publisher: null
   };
 
@@ -19,9 +18,7 @@ export class ChannelEvent {
     const connection =
       channelType === 'default'
       ? Connection.getConnection('default')
-      : channelType === 'publisher'
-      ? Connection.getConnection('publisher')
-      : Connection.getConnection('listener');
+      : Connection.getConnection('publisher');
 
       const channel = connection.createChannel({ json: true });
 
