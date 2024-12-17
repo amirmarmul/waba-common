@@ -18,10 +18,10 @@ export class ChannelEvent {
   private static createChannel(channelType: ChannelType = 'default') {
     const connection =
       channelType === 'default'
-      ? Connection.getConnection() // get default conn
+      ? Connection.getConnection('default')
       : channelType === 'publisher'
-      ? Connection.getConnection() // get publisher conn
-      : Connection.getConnection(); // get listener conn
+      ? Connection.getConnection('publisher')
+      : Connection.getConnection('listener');
 
       const channel = connection.createChannel({ json: true });
 
