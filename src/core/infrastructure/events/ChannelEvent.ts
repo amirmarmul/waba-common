@@ -2,29 +2,44 @@ import { ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
 import logger from '@/core/utils/logger';
 
+type ChannelType = 'publisher' | 'listener' | 'default';
+
 export class ChannelEvent {
-  private static channel?: ChannelWrapper;
+  private static channels: Record<ChannelType, ChannelWrapper | null> = {
+    default: null,
+    listener: null,
+    publisher: null
+  };
 
   private constructor() {
-    ChannelEvent.channel = Connection.getConnection().createChannel({
-      json: true,
-    });
-
-    ChannelEvent.channel.on('error', (err) => {
-      logger.error('AMQP channel error:', { msg: err.message, stack: err.stack });
-      ChannelEvent.channel = undefined;
-    });
-
-    ChannelEvent.channel.on('close', () => {
-      logger.error('AMQP channel error:', { msg: 'closed' });
-      ChannelEvent.channel = undefined;
-    });
+    //
   }
 
-  static getChannel(): ChannelWrapper{
-    if (!ChannelEvent.channel) {
-      new ChannelEvent();
-    }
-    return ChannelEvent.channel as ChannelWrapper;
+  private static createChannel(channelType: ChannelType = 'default') {
+    const connection =
+      channelType === 'default'
+      ? Connection.getConnection() // get default conn
+      : channelType === 'publisher'
+      ? Connection.getConnection() // get publisher conn
+      : Connection.getConnection(); // get listener conn
+
+      const channel = connection.createChannel({ json: true });
+
+      channel.on('error', (err) => {
+        logger.error('AMQP channel error:', { msg: err.message, stack: err.stack });
+        this.channels[channelType] = null;
+      });
+
+      channel.on('close', () => {
+        logger.error('AMQP channel error:', { msg: 'closed' });
+        this.channels[channelType] = null;
+      });
+
+      this.channels[channelType] = channel;
+      return channel;
+  }
+
+  static getChannel(channelType: ChannelType = 'default'): ChannelWrapper {
+    return this.channels[channelType] ?? this.createChannel(channelType);
   }
 }
