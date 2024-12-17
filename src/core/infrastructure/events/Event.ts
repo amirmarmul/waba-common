@@ -18,14 +18,14 @@ export abstract class Event<T> implements EventContract {
   abstract topic: string;
 
   constructor(payload: T) {
-    this.connection = Connection.getConnection();
+    this.connection = Connection.getConnection("publisher");
 
     this.payload = payload;
     this.priority = 0;
   }
 
   init() {
-    this.channel = ChannelEvent.getChannel();
+    this.channel = ChannelEvent.getChannel("publisher");
     this.channel.addSetup(this.setup.bind(this));
 
     return this;
