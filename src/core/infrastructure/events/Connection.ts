@@ -20,7 +20,7 @@ export class Connection {
     const connection = amqp.connect([process.env.APP_MQ!]);
 
     connection.on('connect', () => {
-      logger.info('Connection established successfully.', { connectionType });
+      logger.debug('Connection established successfully.', { connectionType });
     });
 
     connection.on('disconnect', (params) => {
