@@ -33,7 +33,7 @@ export abstract class Listener<T> implements ListenerContract {
     channel.prefetch(parseInt(process.env.MQ_PREFETCH! ?? '10'));
   }
 
-  protected setupExtraQueue(channel: Channel, suffixes: ['backup']) {
+  protected setupExtraQueue(channel: Channel, suffixes: string[] = ['backup']) {
     suffixes.forEach((suffix) => {
       this.extraQueues[suffix] = `${this.queue}.${suffix}`;
       const extraTopic = `${this.topic}.${suffix}`;
