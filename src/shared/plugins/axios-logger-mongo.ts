@@ -133,7 +133,7 @@ export function useMongoLogger(
     requestTimestamp: mongoose.Schema.Types.Mixed,
     responseTimestamp: mongoose.Schema.Types.Mixed,
     duration: mongoose.Schema.Types.Mixed,
-  });
+  }, { timestamps: true });
 
   const logModel = mongoose.model('AxiosLog', logSchema, collectionName);
 
