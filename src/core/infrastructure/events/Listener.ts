@@ -9,6 +9,7 @@ export abstract class Listener<T> implements ListenerContract {
   protected connection: AmqpConnectionManager;
   protected channel: ChannelWrapper;
   protected service: string;
+  protected extraQueues: any = {};
   abstract exchange: string;
   abstract topic: string;
 
@@ -30,6 +31,15 @@ export abstract class Listener<T> implements ListenerContract {
     channel.assertQueue(this.queue);
     channel.bindQueue(this.queue, this.exchange, this.topic);
     channel.prefetch(parseInt(process.env.MQ_PREFETCH! ?? '10'));
+  }
+
+  protected setupExtraQueue(channel: Channel, suffixes: ['backup']) {
+    suffixes.forEach((suffix) => {
+      this.extraQueues[suffix] = `${this.queue}.${suffix}`;
+      const extraTopic = `${this.topic}.${suffix}`;
+      channel.assertQueue(this.extraQueues[suffix], { durable: false });
+      channel.bindQueue(this.extraQueues[suffix], this.exchange, extraTopic);
+    });
   }
 
   abstract onMessage(data: T, ack: Function, nack?: Function): any;
