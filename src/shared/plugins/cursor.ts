@@ -150,8 +150,8 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
     if (options?.aggregate) {
       const aggregatePipeline = [...options.aggregate];
       const matchIndex = aggregatePipeline.findIndex(stage => stage.$match);
-      const _id = Object.assign(effectiveQuery._id ?? {}, aggregatePipeline[matchIndex].$match._id ?? {})
       if (matchIndex !== -1) {
+        const _id = Object.assign(effectiveQuery?._id ?? {}, aggregatePipeline[matchIndex]?.$match?._id ?? {})
         aggregatePipeline[matchIndex].$match = {
           ...aggregatePipeline[matchIndex].$match,
           ...effectiveQuery,
