@@ -150,11 +150,12 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
     if (options?.aggregate) {
       const aggregatePipeline = [...options.aggregate];
       const matchIndex = aggregatePipeline.findIndex(stage => stage.$match);
+      const _id = Object.assign(effectiveQuery._id ?? {}, aggregatePipeline[matchIndex].$match._id ?? {})
       if (matchIndex !== -1) {
         aggregatePipeline[matchIndex].$match = {
           ...aggregatePipeline[matchIndex].$match,
           ...effectiveQuery,
-          _id: Object.assign(effectiveQuery._id, aggregatePipeline[matchIndex].$match._id ?? {})
+          _id: Object.keys(_id).length > 0 ? _id : undefined
         };
       } else if (Object.keys(effectiveQuery).length > 0) {
         aggregatePipeline.unshift({ $match: effectiveQuery });
