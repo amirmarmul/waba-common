@@ -7,7 +7,6 @@ interface EncodedCursorPayload {
   direction: 'next' | 'previous';
 }
 
-// Update model agar menggunakan properti meta
 export class CursorPaginationModel<T> {
   meta: {
     cursors?: { next?: string | undefined; previous?: string | undefined };
@@ -27,9 +26,7 @@ export interface CursorPaginationOptions {
   };
   sort?: any;
   projection?: any;
-  // Cursor yang berisi query dan direction ('next' atau 'previous')
   cursor?: string;
-  // Limit (default: 10)
   limit?: string;
 }
 
@@ -45,19 +42,15 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
     options: CursorPaginationOptions | undefined,
     onError?: Function
   ): Promise<CursorPaginationModel<T> | undefined> {
-    // Mulai dengan query dasar dari options
     let baseQuery = options?.query ? { ...options.query } : {};
     let limit = parseInt(options?.limit ?? '10');
-    // Ambil satu dokumen ekstra untuk pengecekan halaman selanjutnya/previous
     let fetchLimit = limit + 1;
     let direction: 'next' | 'previous' = 'next';
 
-    // Jika tidak ada sort, gunakan _id sebagai default
     let sort = options?.sort ||
       (options?.aggregate?.find((agg: any) => agg.$sort) || {}).$sort ||
       { _id: -1 };
 
-    // Jika ada cursor, dekripsi dan gabungkan kondisi tambahan
     if (options?.cursor) {
       try {
         const decodedStr = Crypto.decrypt(options.cursor);
@@ -65,36 +58,34 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
         logger.debug({ decoded });
         direction = decoded.direction;
 
-        const sortKeys = Object.keys(sort);
-        const sortKey = sortKeys[0];
-        const sortOrder = sort[sortKey];
+        const sortQuery = decoded.query?.sort || {};
+        delete decoded.query?.sort;
 
-        // Ambil nilai boundary dari decoded.query sesuai field sort
-        const decodedQuery = decoded.query || {};
-        let cursorValue: any = decodedQuery.sort[sortKey];
-        delete decodedQuery.sort;
+        for (const key of Object.keys(sort)) {
+          let value = sortQuery[key];
 
-        // Jika field sort berupa tanggal (berakhiran 'At') dan berupa string, konversi ke Date
-        if (sortKey.endsWith('At') && typeof cursorValue === 'string') {
-          cursorValue = moment(cursorValue).toDate();
-        }
-
-        logger.debug({ ['decodedQuery[sortKey]']: decodedQuery[sortKey], sortKey, decodedQuery });
-
-        if (cursorValue !== undefined) {
-          if (direction === 'next') {
-            baseQuery[sortKey] = { [sortOrder === 1 ? '$gte' : '$lte']: cursorValue };
-          } else if (direction === 'previous') {
-            baseQuery[sortKey] = { [sortOrder === 1 ? '$lte' : '$gte']: cursorValue };
+          if (key.endsWith('At') && typeof value === 'string') {
+            value = moment(value).toDate();
           }
-          if (!!decodedQuery[sortKey]) {
-            decodedQuery[sortKey] = { ...baseQuery[sortKey], ...decodedQuery[sortKey] };
+
+          if (value !== undefined) {
+            const operator = direction === 'next'
+              ? (sort[key] === 1 ? '$gte' : '$lte')
+              : (sort[key] === 1 ? '$lte' : '$gte');
+
+            baseQuery[key] = { [operator]: value };
+
+            if (decoded.query?.[key]) {
+              baseQuery[key] = {
+                ...baseQuery[key],
+                ...decoded.query[key]
+              };
+            }
           }
         }
 
         logger.debug({ baseQuery });
-        // Gabungkan kondisi tambahan dari decodedQuery ke baseQuery
-        baseQuery = { ...baseQuery, ...decodedQuery };
+        baseQuery = { ...baseQuery, ...decoded.query };
       } catch (e: any) {
         if (onError) onError(e);
         logger.debug({ e, stack: e.stack });
@@ -102,20 +93,14 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
       }
     }
 
-    // Konversi _id jika diperlukan
     if (baseQuery && baseQuery._id) {
-      if (baseQuery._id.$gte && typeof baseQuery._id.$gte === 'string') {
-        baseQuery._id.$gte = new mongoose.Types.ObjectId(baseQuery._id.$gte);
-      }
-      if (baseQuery._id.$lte && typeof baseQuery._id.$lte === 'string') {
-        baseQuery._id.$lte = new mongoose.Types.ObjectId(baseQuery._id.$lte);
-      }
-      if (baseQuery._id.$ne && typeof baseQuery._id.$ne === 'string') {
-        baseQuery._id.$ne = new mongoose.Types.ObjectId(baseQuery._id.$ne);
-      }
+      ['gte', 'lte', 'ne'].forEach(op => {
+        if (baseQuery._id[`$${op}`] && typeof baseQuery._id[`$${op}`] === 'string') {
+          baseQuery._id[`$${op}`] = new mongoose.Types.ObjectId(baseQuery._id[`$${op}`]);
+        }
+      });
     }
 
-    // Terapkan pencarian jika ada
     let effectiveQuery = { ...baseQuery };
     if (
       options?.search &&
@@ -134,9 +119,7 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
       }
     }
 
-    // Atur sort order sesuai dengan direction
     if (direction === 'previous') {
-      // Untuk previous, ubah urutan sort menjadi kebalikan (descending)
       sort = Object.fromEntries(
         Object.entries(sort).map(([key, value]: any) => [key, -value])
       );
@@ -195,49 +178,53 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
 
     try {
       let docs = await mQuery.exec();
-      // Cek apakah ada dokumen ekstra (indikator adanya halaman selanjutnya/previous)
       let hasMore = docs.length > fetchLimit - 1;
 
       if (direction === 'next') {
         if (hasMore) {
-          docs.pop(); // Hapus elemen ekstra di akhir array
+          docs.pop();
         }
       } else if (direction === 'previous') {
         if (hasMore) {
-          docs.pop(); // Hapus dokumen ekstra di akhir array (karena hasil query dalam urutan descending)
+          docs.pop();
         }
-        docs = docs.reverse(); // Balik agar urutannya natural
+        docs = docs.reverse();
       }
 
-      // Simpan key sort yang digunakan (gunakan _id sebagai fallback)
       const sortKeys = Object.keys(sort);
-      const sortKey = sortKeys.length > 0 ? sortKeys[0] : '_id';
-
-      // Pembuatan cursor
       let newCursorNext: string | undefined = undefined;
       let newCursorPrevious: string | undefined = undefined;
 
       if (docs.length > 0) {
+        const lastDoc = docs[docs.length - 1];
+        const firstDoc = docs[0];
+
+        const buildSortValues = (doc: any) => {
+          return sortKeys.reduce((acc, key) => {
+            acc[key] = doc[key];
+            return acc;
+          }, {} as any);
+        };
+
         if ((direction === 'next' && hasMore) || direction === 'previous') {
-          const lastDoc = docs[docs.length - 1];
           newCursorNext = Crypto.encrypt(
             JSON.stringify({
               query: {
                 _id: { $ne: lastDoc._id },
-                sort: { [sortKey]: lastDoc[sortKey] }
+                sort: buildSortValues(lastDoc)
               },
               direction: 'next'
             })
           );
         }
+
         if (options?.cursor) {
           if (direction === 'next' || (direction === 'previous' && hasMore)) {
-            const firstDoc = docs[0];
             newCursorPrevious = Crypto.encrypt(
               JSON.stringify({
                 query: {
                   _id: { $ne: firstDoc._id },
-                  sort: { [sortKey]: firstDoc[sortKey] }
+                  sort: buildSortValues(firstDoc)
                 },
                 direction: 'previous'
               })
@@ -251,7 +238,6 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
         cursors = undefined;
       }
 
-      // Buat result dengan meta berisi limit dan cursors
       const result = new CursorPaginationModel<any>();
       result.meta = {
         limit,
@@ -267,7 +253,6 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
     }
   };
 
-  // Pengaturan toJSON dan toObject agar _id tampil sebagai id dan __v dihilangkan
   const toJSONOptions = {
     virtuals: true,
     transform: function (doc: any, ret: any) {
