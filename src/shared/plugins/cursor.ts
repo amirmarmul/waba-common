@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { logger, Crypto } from '@/core';
+=======
+import { Crypto, logger } from '@/core';
+>>>>>>> de19241448bfd770e3c72f2c2fba511ddc6152d7
 import moment from 'moment';
 import mongoose, { Schema, Model } from 'mongoose';
 
@@ -71,15 +75,20 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
 
         // Ambil nilai boundary dari decoded.query sesuai field sort
         const decodedQuery = decoded.query || {};
+<<<<<<< HEAD
         let cursorValue: any = decodedQuery[sortKey];
         delete decodedQuery[sortKey];
+=======
+        let cursorValue: any = decodedQuery.sort[sortKey];
+        delete decodedQuery.sort;
+>>>>>>> de19241448bfd770e3c72f2c2fba511ddc6152d7
 
         // Jika field sort berupa tanggal (berakhiran 'At') dan berupa string, konversi ke Date
         if (sortKey.endsWith('At') && typeof cursorValue === 'string') {
           cursorValue = moment(cursorValue).toDate();
         }
 
-        logger.debug({ ['decodedQuery[sortKey]']: decodedQuery[sortKey], sortKey });
+        logger.debug({ ['decodedQuery[sortKey]']: decodedQuery[sortKey], sortKey, decodedQuery });
 
         if (cursorValue !== undefined) {
           if (direction === 'next') {
@@ -87,7 +96,11 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
           } else if (direction === 'previous') {
             baseQuery[sortKey] = { [sortOrder === 1 ? '$lte' : '$gte']: cursorValue };
           }
+          if (!!decodedQuery[sortKey]) {
+            decodedQuery[sortKey] = { ...baseQuery[sortKey], ...decodedQuery[sortKey] };
+          }
         }
+
         logger.debug({ baseQuery });
         // Gabungkan kondisi tambahan dari decodedQuery ke baseQuery
         baseQuery = { ...baseQuery, ...decodedQuery };
@@ -218,7 +231,14 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
           const lastDoc = docs[docs.length - 1];
           newCursorNext = Crypto.encrypt(
             JSON.stringify({
+<<<<<<< HEAD
               query: { _id: { $ne: lastDoc._id }, [sortKey]: lastDoc[sortKey] },
+=======
+              query: {
+                _id: { $ne: lastDoc._id },
+                sort: { [sortKey]: lastDoc[sortKey] }
+              },
+>>>>>>> de19241448bfd770e3c72f2c2fba511ddc6152d7
               direction: 'next'
             })
           );
@@ -228,7 +248,14 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
             const firstDoc = docs[0];
             newCursorPrevious = Crypto.encrypt(
               JSON.stringify({
+<<<<<<< HEAD
                 query: { _id: { $ne: firstDoc._id }, [sortKey]: firstDoc[sortKey] },
+=======
+                query: {
+                  _id: { $ne: firstDoc._id },
+                  sort: { [sortKey]: firstDoc[sortKey] }
+                },
+>>>>>>> de19241448bfd770e3c72f2c2fba511ddc6152d7
                 direction: 'previous'
               })
             );
