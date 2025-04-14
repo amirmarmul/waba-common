@@ -12,9 +12,11 @@ export abstract class Listener<T> implements ListenerContract {
   protected extraQueues: any = {};
   abstract exchange: string;
   abstract topic: string;
+  protected exclusiveConnection: boolean = false;
 
+  // FIXME: support exclusive connection per listener
   constructor() {
-    this.connection = Connection.getConnection("listener");
+    this.connection = Connection.getConnection(this.connectionName);
   }
 
   init() {
@@ -59,6 +61,10 @@ export abstract class Listener<T> implements ListenerContract {
     queue.push(this.exchange);
     queue.push(this.topic);
     return queue.join('.');
+  }
+
+  get connectionName(): string {
+    return this.exclusiveConnection ? this.constructor.name : 'listener';
   }
 
   protected parseMessage(msg: any) {
