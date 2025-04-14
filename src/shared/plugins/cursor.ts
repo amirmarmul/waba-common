@@ -73,13 +73,17 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
               ? (sort[key] === 1 ? '$gte' : '$lte')
               : (sort[key] === 1 ? '$lte' : '$gte');
 
-            baseQuery[key] = { [operator]: value };
+            baseQuery.$or = [
+              { [key]: { [operator]: value } },
+              { [key]: { $exists: false } },
+              { [key]: null }
+            ];
 
             if (decoded.query?.[key]) {
-              baseQuery[key] = {
-                ...baseQuery[key],
+              baseQuery.$or = baseQuery.$or.map((condition: any) => ({
+                ...condition,
                 ...decoded.query[key]
-              };
+              }));
             }
           }
         }
