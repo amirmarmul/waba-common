@@ -2,7 +2,7 @@ import { logger } from '@/core';
 import { Listener as ListenerContract } from '@/core/domain/events/Listener';
 import { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 import { Connection } from './Connection';
-export { Channel, ChannelWrapper };
+export { Channel, ChannelWrapper, Connection };
 
 export abstract class Listener<T> implements ListenerContract {
   protected static instance: Listener<any>;
