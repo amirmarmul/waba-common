@@ -1,22 +1,16 @@
 import amqp, { AmqpConnectionManager, Channel, ChannelWrapper } from 'amqp-connection-manager';
 import logger from '@/core/utils/logger';
 
-type ConnectionType = 'publisher' | 'listener' | 'default';
-
 export { Channel, ChannelWrapper };
 
 export class Connection {
-  private static connections: Record<ConnectionType, AmqpConnectionManager | null> = {
-    default: null,
-    listener: null,
-    publisher: null
-  };
+  private static connections: Record<string, AmqpConnectionManager | null> = {};
 
   private constructor() {
     //
   }
 
-  private static createConnection(connectionType: ConnectionType = 'default'): AmqpConnectionManager {
+  private static createConnection(connectionType: string = 'default'): AmqpConnectionManager {
     const connection = amqp.connect([process.env.APP_MQ!]);
 
     connection.on('connect', () => {
@@ -32,7 +26,7 @@ export class Connection {
     return connection;
   }
 
-  static getConnection(connectionType: ConnectionType = 'default'): AmqpConnectionManager {
+  static getConnection(connectionType: string = 'default'): AmqpConnectionManager {
     return this.connections[connectionType] ?? this.createConnection(connectionType);
   }
 }

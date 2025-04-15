@@ -14,7 +14,6 @@ export abstract class Listener<T> implements ListenerContract {
   abstract topic: string;
   protected exclusiveConnection: boolean = false;
 
-  // FIXME: support exclusive connection per listener
   constructor() {
     this.connection = Connection.getConnection(this.connectionName);
   }
