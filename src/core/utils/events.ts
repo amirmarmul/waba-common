@@ -10,5 +10,5 @@ export async function dispatcherWithoutPersistence(
   publisher: Event,
   options?: EventOptions
 ): Promise<any> {
-  return await publisher.init().publishWithoutPersistence(options);
+  return await publisher.init().publishWithoutPersistence!(options);
 }
