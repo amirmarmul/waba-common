@@ -21,7 +21,7 @@ export class SequelizeHealthIndicator extends HealthIndicator {
   /**
    * Checks if the MongoDB responds in (default) 1000ms and
    * returns a result object corresponding to the result
-   * 
+   *
    * @example
    * mongooseHealthIndicator.pingCheck('mongodb', { timeout: 1000 });
    */
@@ -63,8 +63,7 @@ export class SequelizeHealthIndicator extends HealthIndicator {
 
   private getContextConnection(): any | null {
     try {
-      const MySQLDB = Container.get<string>('MYSQL_DB');
-      const sequelize = new Sequelize(MySQLDB, { dialect: 'mysql' });
+      const sequelize = Container.get<Sequelize>('sequelize');
       return sequelize.connectionManager;
     } catch (error) {
       return null;
