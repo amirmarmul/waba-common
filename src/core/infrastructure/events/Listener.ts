@@ -35,6 +35,7 @@ export abstract class Listener<T> implements ListenerContract {
   }
 
   protected setupExtraQueue(channel: Channel, suffixes: string[] = ['backup']) {
+    suffixes.push('json_parse_error');
     suffixes.forEach((suffix) => {
       this.extraQueues[suffix] = `${this.queue}.${suffix}`;
       const extraTopic = `${this.topic}.${suffix}`;
@@ -49,6 +50,9 @@ export abstract class Listener<T> implements ListenerContract {
     return this.channel.consume(this.queue, (msg) => {
       const parsedMessage = this.parseMessage(msg);
       logger.debug('Receive message %s', this.constructor.name, { parsedMessage });
+      
+      if (!parsedMessage) return;
+
       this.onMessage(parsedMessage, () => this.channel.ack(msg), () => this.channel.nack(msg));
     });
   }
@@ -67,7 +71,22 @@ export abstract class Listener<T> implements ListenerContract {
   }
 
   protected parseMessage(msg: any) {
-    const json = msg.content.toString();
-    return JSON.parse(json);
+    try {
+      const json = msg.content.toString();
+      return JSON.parse(json);
+    } catch (error: any) {
+      logger.error("Error while parsing message", {
+        message: error.message,
+        stack: error.stack,
+      });
+
+      if (this.extraQueues.json_parse_error) {
+        this.channel.sendToQueue(this.extraQueues.json_parse_error, msg.content);
+      }
+
+      this.channel.ack(msg);
+      return;
+    }
   }
 }
+
