@@ -9,7 +9,7 @@ import { Container, Service } from '@/core/infrastructure/Container';
 import { Sequelize } from 'sequelize';
 
 export interface SequelizePingCheckOptions {
-  connection?: any;
+  connection?: Sequelize;
   /**
    * The amount of time the check should require in ms
    */
@@ -19,11 +19,11 @@ export interface SequelizePingCheckOptions {
 @Service()
 export class SequelizeHealthIndicator extends HealthIndicator {
   /**
-   * Checks if the MongoDB responds in (default) 1000ms and
-   * returns a result object corresponding to the result
+   * Checks if the MySQL/PostgreSQL database responds in (default) 1000ms
+   * Uses existing connection pool, does NOT create new connections
    *
    * @example
-   * mongooseHealthIndicator.pingCheck('mongodb', { timeout: 1000 });
+   * sequelizeHealthIndicator.pingCheck('mysql', { timeout: 1000 });
    */
   async pingCheck(
     key: string,
@@ -45,6 +45,8 @@ export class SequelizeHealthIndicator extends HealthIndicator {
       if (err instanceof TimeoutError) {
         throw new TimeoutError(timeout);
       }
+      // Log error for debugging
+      console.error(`Health check failed for ${key}:`, err);
     }
 
     if (isHealthy) {
@@ -56,15 +58,20 @@ export class SequelizeHealthIndicator extends HealthIndicator {
     }
   }
 
-  private async pingDB(connection: any, timeout: number) {
-    const promise = connection.getConnection({ type: 'read' }) ? Promise.resolve() : Promise.reject();
+  /**
+   * Ping database using existing connection pool
+   * Uses Sequelize.authenticate() which executes a simple query (SELECT 1)
+   * Does NOT create new database connections
+   */
+  private async pingDB(connection: Sequelize, timeout: number) {
+    const promise = connection.authenticate();
     return await promiseTimeout(timeout, promise);
   }
 
-  private getContextConnection(): any | null {
+  private getContextConnection(): Sequelize | null {
     try {
       const sequelize = Container.get<Sequelize>('sequelize');
-      return sequelize.connectionManager;
+      return sequelize;
     } catch (error) {
       return null;
     }
