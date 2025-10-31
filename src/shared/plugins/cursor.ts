@@ -88,8 +88,25 @@ export function mongooseCursorPaginate<T>(schema: Schema<T>) {
           }
         }
 
-        logger.debug({ baseQuery });
-        baseQuery = { ...baseQuery, ...decoded.query };
+        logger.debug({ baseQueryBeforeMerge: baseQuery, decodedQuery: decoded.query });
+        
+        // Deep merge decoded.query ke baseQuery dengan handling khusus untuk aggregation
+        for (const key in decoded.query) {
+          if (key === '_id') {
+            // Merge _id conditions secara khusus
+            baseQuery._id = baseQuery._id 
+              ? { ...baseQuery._id, ...decoded.query._id }
+              : decoded.query._id;
+          } else if (key !== 'sort') {
+            // Skip $or karena sudah dibuat di loop sebelumnya
+            // Untuk field lain, merge langsung
+            if (key !== '$or') {
+              baseQuery[key] = decoded.query[key];
+            }
+          }
+        }
+        
+        logger.debug({ baseQueryAfterMerge: baseQuery });
       } catch (e: any) {
         if (onError) onError(e);
         logger.debug({ e, stack: e.stack });
