@@ -6,8 +6,10 @@ import {
 } from "crypto";
 
 export enum CryptoAlgorithm {
+
   AES256CTR = "aes-256-ctr",
   AES256GCM = "aes-256-gcm",
+  AES256ECB = "aes-256-ecb",
 }
 
 enum CryptoError {
@@ -46,6 +48,14 @@ export class Crypto {
       encrypted += cipher.final("hex");
       const tag = cipher.getAuthTag();
       return `${iv.toString("hex")}-${tag.toString("hex")}-${encrypted}`;
+    }
+
+    if (algorithm == CryptoAlgorithm.AES256ECB) {
+      const key = createHash("sha256").update(Crypto.secretKey).digest();
+      const cipher = createCipheriv("aes-256-ecb", key, null);
+      let encrypted = cipher.update(plain, "utf8", "hex");
+      encrypted += cipher.final("hex");
+      return encrypted;
     }
 
     throw new Error(CryptoError.UNKNOWN_ALGORITHM);
@@ -87,6 +97,14 @@ export class Crypto {
       );
       decipher.setAuthTag(Buffer.from(parts[1], "hex"));
       let decrypted = decipher.update(parts[2], "hex", "utf8");
+      decrypted += decipher.final("utf8");
+      return decrypted;
+    }
+
+    if (algorithm == CryptoAlgorithm.AES256ECB) {
+      const key = createHash("sha256").update(Crypto.secretKey).digest();
+      const decipher = createDecipheriv("aes-256-ecb", key, null);
+      let decrypted = decipher.update(cryptedMessage, "hex", "utf8");
       decrypted += decipher.final("utf8");
       return decrypted;
     }
