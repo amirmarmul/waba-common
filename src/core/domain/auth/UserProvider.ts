@@ -15,6 +15,8 @@ export interface UserProvider {
    * Get user by the given credentials.
    */
   getByCredentials(credentials: object): Promise<Authenticable | null>;
+
+  getByUserKeyAndUserToken(userKey: string, userToken: string): Promise<Authenticable | null>;
 }
 
 export default UserProvider;

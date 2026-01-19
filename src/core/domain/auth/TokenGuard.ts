@@ -62,9 +62,14 @@ export class TokenGuard implements Guard {
 
     let user = null;
     let token = this.getTokenFromRequest();
+    let { userKey, userToken } = this.getUserKeyTokenFromRequest()
 
     if (token) {
       user = await this._provider.getByToken(token);
+    }
+
+    if (userKey && userToken) {
+      user = await this._provider.getByUserKeyAndUserToken(userKey, userToken);
     }
 
     return user;
@@ -89,6 +94,21 @@ export class TokenGuard implements Guard {
     }
 
     return token;
+  }
+
+  private getUserKeyTokenFromRequest() {
+    let userKey = this._req.query['userkey'];
+    let userToken = this._req.query['usertoken'];
+
+    if (!userKey) {
+      userKey = this._req.body['userkey'];
+    }
+
+    if (!userToken) {
+      userToken = this._req.body['usertoken'];
+    }
+
+    return { userKey, userToken };
   }
 }
 
